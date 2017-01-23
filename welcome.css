@@ -2,14 +2,117 @@ body {
     background-color: lightblue;
 }
 
+
+form {
+    border: solid #f1f1f1;
+}
+
+header{
+    text-align: center;
+    resize: both;
+}
+
+label{
+    font-size: small;
+}
+
+/* Full-width inputs */
+input[type=text], input[type=password] {
+    font-size: x-small;
+    width: auto;
+    padding: auto auto;
+    margin: auto;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    float: right;
+    top: auto;
+    bottom: auto;
+}
+
+select{
+    float: right;
+    font-size: x-small;
+    width: auto;
+    height: 5%;
+}
+
+/* Set a style for all buttons */
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: auto auto;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 125px;
+    float: right;
+
+}
+
+/* Extra style for the cancel button (red) */
+.cancelbtn {
+    width: auto;
+    padding: auto auto;
+    background-color: #f44336;
+}
+
+
+
+/* Add padding to containers */
+.container1 {
+    border:thin solid blue;
+    border-radius: 2px;
+    background-color: white;
+    width: 250px;
+    height: 100px;
+    position: static;
+    top: 152px;
+    float: left;
+}
+
+.container2 {
+    border: thin solid blue;
+    border-radius: 2px;
+    background-color: white;
+    width: 250px;
+    height: 290px;
+    position: static;
+    top: 355px;
+    float: left;
+
+}
+
 IMG.displayed {
-    margin: 0;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-right: -50%;
-    transform: translate(-50%, -50%);
-    border-style: solid;
-    border-width: 5px;
-    border-color: black;
+    height: 398px;
+    width: 338px;
+    position: static;
+    top: 301px;
+    border: thin solid blue;
+    border-radius: 2px;
+    float: left;
+
+
+}
+
+
+DIV.container{
+    float: left;
+}
+
+/* The "Forgot password" text */
+span.psw {
+    float: right;
+    padding-top: 16px;
+}
+
+/* Change styles for span and cancel button on extra small screens */
+@media screen and (max-width: 300px) {
+    span.psw {
+        display: block;
+        float: none;
+    }
+    .cancelbtn {
+        width: 100%;
+    }
 }
