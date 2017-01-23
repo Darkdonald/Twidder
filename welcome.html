@@ -5,13 +5,61 @@
         <script src="client.js" type="text/javascript"></script>
         <script src="serverstub.js" type="text/javascript"></script>
 
-
-
-
-
     </head>
 
     <body>
-        <IMG class="displayed" src="wimage.png" alt="">
+    
+    <div class="image">
+        <IMG class="displayed" src="wimage.png">
+    </div>
+
+
+
+    <div class="container1">
+        <label>Username</label>
+        <input type="text" placeholder="Enter Username" name="uname" required>
+
+        <label><br>Password</label>
+        <input type="password" placeholder="Enter Password" name="psw" required>
+
+        <button type="submit">login</button>
+
+    </div>
+
+    <div class="container2">
+        <header><b>Sign up here<br/><br></b></header>
+
+        <label>First Name</label>
+        <input type="text" placeholder="" name="uname" required>
+
+        <label><br>Family Name</label>
+        <input type="text" placeholder="" name="FN" required>
+
+        <label><br>Gender</label>
+        <select name="Gen" size="1" required>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+        </select>
+
+        <label><br>City</label>
+        <input type="text" placeholder="" name="City" required>
+
+        <label><br>Country</label>
+        <input type="text" placeholder="" name="Cou" required>
+
+        <label><br>Email</label>
+        <input type="text" placeholder="" name="EM" required>
+
+        <label><br>Password</label>
+        <input type="text" placeholder="" name="psw_new" required>
+
+        <label><br>Repeat PSW</label>
+        <input type="text" placeholder="" name="psw_rep" required>
+
+        <button type="submit">SignUp</button>
+        
+    </div>
+
     </body>
 </html>
