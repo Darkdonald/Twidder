@@ -1,5 +1,5 @@
 body {
-    background-color: lightblue;
+    background-color: #0cc7d3; /*LiU Color*/
 }
 
 
@@ -19,6 +19,7 @@ label{
 /* Full-width inputs */
 input[type=text], input[type=password] {
     font-size: x-small;
+    font-family: Calibri, Arial, "sans-serif";
     width: auto;
     padding: auto auto;
     margin: auto;
@@ -33,13 +34,14 @@ input[type=text], input[type=password] {
 select{
     float: right;
     font-size: x-small;
+    font-family: Calibri, Arial, "sans-serif";
     width: auto;
     height: 5%;
 }
 
 /* Set a style for all buttons */
 button {
-    background-color: #4CAF50;
+    background-color: #0cc7d3;
     color: white;
     padding: auto auto;
     margin: 8px 0;
@@ -59,45 +61,61 @@ button {
 
 
 
-/* Add padding to containers */
-.container1 {
-    border:thin solid blue;
-    border-radius: 2px;
+/* Sign_In */
+div.container1 {
+    font-family: Calibri, Arial, "sans-serif";
+    border: 2px solid #687f91;
     background-color: white;
-    width: 250px;
-    height: 100px;
-    position: static;
-    top: 152px;
-    float: left;
+    width: 237px;
+    height: 93px;
+    padding-top:3px;
+    padding-left:3px;
+    padding-right: 6px;
+    margin-bottom: 10px;
+
+
+
 }
 
-.container2 {
-    border: thin solid blue;
-    border-radius: 2px;
+/*Sign_Up*/
+div.container2 {
+    font-family: Calibri, Arial, "sans-serif";
+     font-size: large;
+    border: 2px solid #687f91;
     background-color: white;
-    width: 250px;
-    height: 290px;
-    position: static;
-    top: 355px;
-    float: left;
+    width: 237px;
+    height: 283px;
+    padding-top:3px;
+    padding-left:3px;
+    padding-right: 6px;
+
+
 
 }
 
 IMG.displayed {
-    height: 398px;
-    width: 338px;
-    position: static;
-    top: 301px;
-    border: thin solid blue;
-    border-radius: 2px;
+    border: 2px solid #687f91;
+    height: 396px;
+    width: 336px;
     float: left;
+    margin-right: 10px;
+
 
 
 }
+div.container_cont{
+      float: left;
+}
+
+div.container_all{
+    height: 400px;
+    width: 600px;
+    margin-top: 100px;
+    margin-left:auto;
+    margin-right: auto;
+}
 
 
-DIV.container{
-    float: left;
 }
 
 /* The "Forgot password" text */
