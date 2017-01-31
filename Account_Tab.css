@@ -1,0 +1,32 @@
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    background-color: #687f91;
+    overflow: hidden;
+
+}
+
+li {
+    float: left;
+    font-size: large;
+}
+
+li a {
+    display: block;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+}
+
+li a:hover(.active) {
+    background-color: #0cc7d3;
+}
+
+div.container_all_acc{
+}
+
+#homebtn, #accoutbtn, #browsebtn{
+    background-color: transparent;
+    font-size: medium;
+}
