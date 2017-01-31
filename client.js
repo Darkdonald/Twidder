@@ -1,17 +1,27 @@
 /**
  * Created by Jonas Brückner & Maximilian Gerst on 19.01.17.
  */
-
 displayView = function(){
-// the code required to display a view
+    // Get the content to display
+    var elem = document.getElementById("welcomeview");
+    // Find the target element where you'll display
+    var target = document.body;
+    // Put it there
+    target.innerHTML = elem.innerHTML;
 };
+
 window.onload = function(){
-//code that is executed as the page is loaded.
-//You shall put your own custom code here.
-//window.alert() is not allowed to be used in your implementation.
-//window.alert("Hello TDDD97!");
 
-
-
-
+    displayView();
 };
+
+
+
+
+samePW = function(){
+    if (document.getElementById("pw1").innerHTML.isEqual(document.getElementById("pw2").innerHTML)){
+        return "Concurrent";
+    }else {
+        return "Password not concurrent!";
+    }
+}
