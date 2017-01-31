@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Account</title>
+     <script src="client.js" type="text/javascript"></script>
+     <script src="serverstub.js" type="text/javascript"></script>
+    <link href="Account.css" type="text/css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container_all_acc" >
+
+    <div class="account">
+        <header><b>Change Passwort<br/><br></b></header>
+
+        <label><br> Old Password</label>
+        <input id="OldPW" type="text" placeholder="Enter Old Passwort" name="OPW" required>
+
+        <label><br>New Password</label>
+        <input id="NewPW" type="text" placeholder="Enter New Passwort" name="NPW" required>
+
+        <label><br>New Password</label>
+        <input id="RNewPW" type="text" placeholder="Repeat New Passwort" name="RNPW" required>
+<br>
+        <button id="submitbtn" type="submit">Send</button>
+    </div>
+
+    <div class="logoutbtn">
+        <button type="button" id="logout" oneclick="alert(Test)">Log Out</button>
+    </div>
+</div>
+
+</body>
+</html>
