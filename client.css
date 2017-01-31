@@ -17,7 +17,7 @@ label{
 }
 
 /* Full-width inputs */
-input[type=text], input[type=password] {
+input[type=text], input[type=password], input[type=email] {
     font-size: x-small;
     font-family: Calibri, Arial, "sans-serif";
     width: auto;
