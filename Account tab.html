@@ -5,14 +5,12 @@
     <title>Tabs</title>
   <meta charset="utf-8">
     <link href="Account_Tab.css" type="text/css" rel="stylesheet">
-    <link href="Home.css" type="text/css" rel="stylesheet">
-    <link href="Account.css" type="text/css" rel="stylesheet">
-    <link href="Browser.css" type="text/css" rel="stylesheet">
     <link href="hide_elements.js" type="text/css" rel="javascript">
 </head>
 
-<body>
+<body onload="hide(home_ref)">
 <script src="hide_elements.js"></script>
+
 
 <div class="bar">
 <ul>
@@ -23,7 +21,7 @@
 </div>
 
 
-
+<!--homeTab-->
 <div id="home" class="container_all_home">
 
 <div class="information">
@@ -48,21 +46,21 @@
 
 
 
-
+<!--accouontTab-->
 <div id="account" class="container_all_acc" >
 
     <div class="account">
-        <header><b>Change Passwort<br/><br></b></header>
+        <header><b>Change Passwort<br><br></b></header>
 
-        <label><br> Old Password</label>
+        <label id="lOldPW">Old Password</label>
         <input id="OldPW" type="text" placeholder="Enter Old Passwort" name="OPW" required>
 
-        <label><br>New Password</label>
+        <label id="lNewPW"><br>New Password</label>
         <input id="NewPW" type="text" placeholder="Enter New Passwort" name="NPW" required>
 
-        <label><br>New Password</label>
+        <label id="lRNewPW"><br>New Password</label>
         <input id="RNewPW" type="text" placeholder="Repeat New Passwort" name="RNPW" required>
-        <br>
+
         <button id="submitbtn" type="submit">Send</button>
     </div>
 
@@ -73,7 +71,7 @@
 
 
 
-
+<!--browserTab-->
 <div id="browse" class="contaier_all_browse">
 
 <div class="search">
