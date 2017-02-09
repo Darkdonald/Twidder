@@ -6,27 +6,21 @@
 displayView = function() {
     // Get the content to display
     var elemWelcome = document.getElementById("welcomeview");
-    var elemProfile = document.getElementById("profileview");
+
     // Find the target element where you'll display
     var target = document.body;
     // Put it there
-    if (document.getElementsByTagName("button") == true) {
+    target.innerHTML = elemWelcome.innerHTML;
 
-        if (signIn() == true) {
-            target.innerHTML = elemProfile.innerHTML;
-        } else {
-            target.innerHTML = elemWelcome.innerHTML;
-        }
 
-        if (signUp() == true) {
-            target.innerHTML = elemProfile.innerHTML;
-        } else {
-            target.innerHTML = elemWelcome.innerHTML;
-        }
-    }else{
-        target.innerHTML = elemWelcome.innerHTML
-    }
 };
+
+displayViewProfile = function () {
+    var elemProfile = document.getElementById("profileview");
+    var target = document.body;
+    target.innerHTML = elemProfile.innerHTML;
+};
+
 
 
 window.onload = function(){
@@ -39,14 +33,15 @@ window.onload = function(){
 
 signIn = function () {
 
-    var email = document.getElementsByName("emailIn");
-    var pass = document.getElementsByName("psw");
+    var email = document.getElementsByName("emailIn")["0"].value.toString();
+    var pass = document.getElementsByName("psw")["0"].value.toString();
 
     if (correct_Email(email) && correct_PW(pass)){
         var input = serverstub.signIn(email, pass);
 
         if (input.success === true){
             console.log(input.message);
+            displayViewProfile();
             return true;
 
         }else{
@@ -64,30 +59,31 @@ signIn = function () {
 
 signUp = function () {
 
-    var email = document.getElementsByName("EM");
+    var email = document.getElementsByName("EM")["0"].value.toString();
     console.log(email);
-    var pass = document.getElementsByName("psw_new");
+    var pass = document.getElementsByName("psw_new")["0"].value.toString();
     console.log(pass);
-    var fn = document.getElementsByName("unameReg");
+    var fn = document.getElementsByName("unameReg")["0"].value.toString();
     console.log(fn);
-    var famnam = document.getElementsByName("FN");
+    var famnam = document.getElementsByName("FN")["0"].value.toString();
     console.log(famnam);
-    var g = document.getElementsByName("Gen");
+    var g = document.getElementsByName("Gen")["0"].value.toString();
     console.log(g);
-    var ci = document.getElementsByName("City");
+    var ci = document.getElementsByName("City")["0"].value.toString();
     console.log(ci);
-    var co = document.getElementsByName("Cou");
+    var co = document.getElementsByName("Cou")["0"].value.toString();
     console.log(co);
-    var psw2 = document.getElementsByName("psw_rep");
+    var psw2 = document.getElementsByName("psw_rep")["0"].value.toString();
     console.log(psw2);
 
-    if(/*correct_Email(email) == true && correct_PW(pass) == true  && */ correct_FirstName(fn) == true && correct_FamilyName(famnam) == true && correct_City(ci) == true && correct_Country(co)== true){
-        console.log("hallo");
+    if(correct_Email(email) == true && correct_PW(pass) == true  &&  correct_FirstName(fn) == true && correct_FamilyName(famnam) == true && correct_City(ci) == true && correct_Country(co)== true && samePW(pass, psw2) == true){
+
         var input = {email: email, password: pass, firstname: fn, familyname: famnam, gender: g, city: ci, country: co};
         var inputAll = serverstub.signUp(input);
 
         if (inputAll.success == true){
             console.log(inputAll.message);
+            displayViewProfile();
             return true;
         }else {
             console.log(inputAll.message);
@@ -105,7 +101,7 @@ signUp = function () {
 
 correct_Email = function(email){
     var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-    if (mailformat.test(email)){
+    if (email.match(mailformat)){
         return true;
     }else{
         console.log("Email not confirm");
@@ -124,7 +120,7 @@ correct_PW = function (psw) {
 };
 
 samePW = function(pw1, pw2){
-    if (pw1.value.match(pw2.value)){
+    if (pw1.localeCompare(pw2) == 0){
         return true;
     }else {
         console.log("Password not concurrent");
@@ -133,9 +129,8 @@ samePW = function(pw1, pw2){
 };
 
 correct_FirstName = function (fn) {
-    var letters = /^[a-zA-Z]$/;
-
-    if (fn.match(letters)){
+    var letters = /^[a-zA-Z\u00fc\u00c4\u00e4\u00d6\u00f6\u00dc\u00df]+$/;
+    if (letters.test(fn) == true){
         return true;
     }else{
         console.log("First Name not confirm");
@@ -144,8 +139,8 @@ correct_FirstName = function (fn) {
 };
 
 correct_FamilyName = function (famn) {
-    var letters = /^[a-zA-Z]$/;
-    if (famn.match(letters)){
+    var letters = /^[a-zA-Z\u00fc\u00c4\u00e4\u00d6\u00f6\u00dc\u00df]+$/;
+    if (letters.test(famn)){
         return true;
     }else{
         console.log("Family Name not confirm");
@@ -154,8 +149,8 @@ correct_FamilyName = function (famn) {
 };
 
 correct_Country = function (count) {
-    var letters = /^[a-zA-Z]$/;
-    if (count.value.match(letters)){
+    var letters = /^[a-zA-Z\u00fc\u00c4\u00e4\u00d6\u00f6\u00dc\u00df]+$/;
+    if (letters.test(count)){
         return true;
     }else{
         console.log("Country not confirm");
@@ -164,8 +159,8 @@ correct_Country = function (count) {
 };
 
 correct_City = function (city) {
-    var letters = /^[a-zA-Z]$/;
-    if (city.value.match(letters)){
+    var letters = /^[a-zA-Z\u00fc\u00c4\u00e4\u00d6\u00f6\u00dc\u00df]+$/;
+    if (letters.test(city)){
         return true;
     }else{
         console.log("City not confirm");
