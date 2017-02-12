@@ -3,7 +3,19 @@
  */
 
 
+viewScreen = function () {
+    if (localStorage.getItem("token")){
+        console.log("true");
+        displayViewProfile();
+    }
+    else {
+        console.log("false");
+        displayView();
+    }
+}
+
 displayView = function() {
+//Welcome Screen, No tocken
     // Get the content to display
     var elemWelcome = document.getElementById("welcomeview");
 
@@ -16,18 +28,17 @@ displayView = function() {
 };
 
 displayViewProfile = function () {
+    // Profile View, token exists
     var elemProfile = document.getElementById("profileview");
     var target = document.body;
     target.innerHTML = elemProfile.innerHTML;
+    onload=hide(home_ref);
 };
 
 
 
 window.onload = function(){
-
-    displayView();
-
-
+    viewScreen();
 };
 
 
@@ -38,10 +49,10 @@ signIn = function () {
 
     if (correct_Email(email) && correct_PW(pass)){
         var input = serverstub.signIn(email, pass);
-
         if (input.success === true){
             console.log(input.message);
-            displayViewProfile();
+            localStorage.setItem("token", input.data.toString());
+            viewScreen()
             return true;
 
         }else{
@@ -83,7 +94,9 @@ signUp = function () {
 
         if (inputAll.success == true){
             console.log(inputAll.message);
-            displayViewProfile();
+            var input = serverstub.signIn(email, pass);
+            localStorage.setItem("token", input.data.toString());
+            viewScreen();
             return true;
         }else {
             console.log(inputAll.message);
@@ -168,6 +181,34 @@ correct_City = function (city) {
     }
 };
 
+
+hide = function (ID) {
+    if (ID==home_ref)
+    {
+        document.getElementById("home").style.display = "block";
+        document.getElementById("browse").style.display = "none";
+        document.getElementById("account").style.display = "none";
+    }
+
+    else if (ID ==browse_ref)
+    {
+        document.getElementById("browse").style.display = "block";
+        document.getElementById("home").style.display = "none";
+        document.getElementById("account").style.display = "none";
+    }
+
+    else if (ID==account_ref)
+    {
+        document.getElementById("account").style.display = "block";
+        document.getElementById("home").style.display = "none";
+        document.getElementById("browse").style.display = "none";
+    }
+};
+
+logout = function (){
+    localStorage.removeItem("token");
+    viewScreen();
+}
 
 
 
