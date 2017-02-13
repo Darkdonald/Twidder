@@ -1,19 +1,18 @@
+/*Created by Jonas Brückner & Maximilian Gerst on*/
+
+/*Style of the whole body*/
 body {
-    background-color: #0cc7d3; /*LiU Color*/
+    background-color: #0cc7d3; /*Background-color = LiU Color*/
 }
-
-
-form {
-    border: solid #f1f1f1;
-}
-
+/*Style of the Heading of the boxes*/
 header{
-    text-align: center;
-    resize: both;
+    text-align: center; /*Get the heading in the center of the box*/
+    resize: both; /*element is resizable by the user*/
 }
 
+/*Style of the labels*/
 label{
-    font-size: small;
+    font-size: small; /*Size of the font*/
 }
 
 /* Full-width inputs */
@@ -72,8 +71,6 @@ div.container1 {
     padding-right: 6px;
     margin-bottom: 10px;
 
-
-
 }
 
 /*Sign_Up*/
@@ -102,7 +99,7 @@ IMG.displayed {
 
 
 }
-div.container_cont{
+div.container_welcome{
       float: left;
 }
 
@@ -112,25 +109,6 @@ div.container_all{
     margin-top: 100px;
     margin-left:auto;
     margin-right: auto;
-}
-
-
-
-/* The "Forgot password" text */
-span.psw {
-    float: right;
-    padding-top: 16px;
-}
-
-/* Change styles for span and cancel button on extra small screens */
-@media screen and (max-width: 300px) {
-    span.psw {
-        display: block;
-        float: none;
-    }
-    .cancelbtn {
-        width: 100%;
-    }
 }
 
 
@@ -160,8 +138,6 @@ li a:hover(.active) {
     background-color: #0cc7d3;
 }
 
-div.container_all_acc{
-}
 
 #homebtn, #accoutbtn, #browsebtn{
     background-color: transparent;
@@ -169,30 +145,6 @@ div.container_all_acc{
 }
 
 /*browserTab*/
-body {
-    background-color: #0cc7d3; /*LiU Color*/
-}
-
-    header{
-    text-align: center;
-    resize: both;
-}
-input[type=text]{
-    font-size: small;
-    font-family: Calibri, Arial, "sans-serif";
-    width: auto;
-    padding: auto;
-    margin: auto;
-    display: inline-block;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-    float: left;
-    top: auto;
-    bottom: auto;
-}
-label {
-    font-size: small;
-}
 
 div.contaier_all_browse{
     height: 400px;
@@ -322,12 +274,6 @@ div.account{
     float:right;
     font-size: small;
 
-}
-#OldPW, #NewPW{
-   margin-bottom: 5px;
-}
-
-#lOldPW, #lNewPW, #lRNewPW{
 }
 
 #logout {
