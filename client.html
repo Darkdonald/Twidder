@@ -63,7 +63,7 @@
         </script>
 
 
-        <div type="text/view" id="profileview" class="">
+        <script type="text/view" id="profileview" class="">
             <div class="bar">
 
                 <ul>
@@ -126,7 +126,7 @@
             <div class="search">
                 <header><b>Search by Email<br> <br> </b> </header>
                 <input id="search_email" type="text" placeholder="Enter Email" name="smail" required>
-                <button type="button" onclick="serverstub.getUserDataByEmail(token,smail)">Search</button>
+                <button type="button" name="buttonSearch" onclick="getUserInformation()">Search</button>
             </div>
 
             <div class="wall">
@@ -136,18 +136,21 @@
                 <button type="submit">Send</button>
             </div>
 
-            <div class="information_other">
+         <div class="information_other">
                 <header><b>Personal Informations <br><br></b></header>
-                <label id="fname"></label><br>
-                <label id="lname"></label><br>
-                <label id="gender"></label><br>
-                <label id="city"></label><br>
-                <label id="country"></label><br>
-                <label id="infoemail"></label>
+                <label id="firstname"></label><br>
+                <label id="lastname"></label><br>
+                <label id="genderredneg"></label><br>
+                <label id="cityytic"></label><br>
+                <label id="count"></label><br>
+                <label id="inemail"></label>
             </div>
 
+
+
+
             </div>
-        </div>
+        </script>
     </head>
 
     <body>

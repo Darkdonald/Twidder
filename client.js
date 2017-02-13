@@ -2,7 +2,7 @@
  * Created by Jonas Brückner & Maximilian Gerst on 19.01.17.
  */
 viewScreen = function () {
-    if (localStorage.getItem("token")){
+    if (getToken()){
         console.log("true");
         displayViewProfile();
     }
@@ -49,13 +49,10 @@ signIn = function () {
         var input = serverstub.signIn(email, pass);
         if (input.success === true){
             console.log(input.message);
-            localStorage.setItem("token", input.data.toString());
             viewScreen()
-            console.log(serverstub.getUserDataByToken(localStorage.getItem("token")).data.city);
             return true;
 
         }else{
-
             console.log(input.message);
             return false;
 
@@ -94,7 +91,6 @@ signUp = function () {
         if (inputAll.success == true){
             console.log(inputAll.message);
             var input = serverstub.signIn(email, pass);
-            localStorage.setItem("token", input.data.toString());
             viewScreen();
             return true;
         }else {
@@ -179,7 +175,11 @@ correct_City = function (city) {
         return false;
     }
 };
-
+getToken = function () {
+   var pos = localStorage.getItem("loggedinusers").lastIndexOf(":");
+   var tok = localStorage.getItem("loggedinusers").slice(2,pos-1).toString();
+   return tok;
+}
 
 hide = function (ID) {
     if (ID==home_ref)
@@ -187,14 +187,16 @@ hide = function (ID) {
         document.getElementById("home").style.display = "block";
         document.getElementById("browse").style.display = "none";
         document.getElementById("account").style.display = "none";
-        document.getElementById("fname").innerHTML = "First Name: ".concat(serverstub.getUserDataByToken(localStorage.getItem("token")).data.firstname);
-        document.getElementById("lname").innerHTML = "Last Name: ".concat(serverstub.getUserDataByToken(localStorage.getItem("token")).data.familyname);
-        document.getElementById("gender").innerHTML = "Gender: ".concat(serverstub.getUserDataByToken(localStorage.getItem("token")).data.gender);
-        document.getElementById("city").innerHTML = "City: ".concat(serverstub.getUserDataByToken(localStorage.getItem("token")).data.city);
-        document.getElementById("country").innerHTML = "Country: ".concat(serverstub.getUserDataByToken(localStorage.getItem("token")).data.country);
-        document.getElementById("infoemail").innerHTML = "Email: ".concat(serverstub.getUserDataByToken(localStorage.getItem("token")).data.email);
+        document.getElementById("fname").innerHTML = "First Name: ".concat(serverstub.getUserDataByToken(getToken()).data.firstname);
+        document.getElementById("lname").innerHTML = "Last Name: ".concat(serverstub.getUserDataByToken(getToken()).data.familyname);
+        document.getElementById("gender").innerHTML = "Gender: ".concat(serverstub.getUserDataByToken(getToken()).data.gender);
+        document.getElementById("city").innerHTML = "City: ".concat(serverstub.getUserDataByToken(getToken()).data.city);
+        document.getElementById("country").innerHTML = "Country: ".concat(serverstub.getUserDataByToken(getToken()).data.country);
+        document.getElementById("infoemail").innerHTML = "Email: ".concat(serverstub.getUserDataByToken(getToken()).data.email);
 
-        document.getElementById("my_messages").innerHTML = serverstub.getUserMessagesByToken(localStorage.getItem("token"));
+        document.getElementById("my_messages").innerHTML = serverstub.getUserMessagesByToken(getToken());
+        console.log(getToken()); //Test welcher User eingeloggt ist: Max
+
     }
 
     else if (ID ==browse_ref)
@@ -213,11 +215,28 @@ hide = function (ID) {
 };
 
 logout = function (){
-    localStorage.removeItem("token");
+    console.log(serverstub.signOut(getToken()));
     viewScreen();
 }
 
 postmessage = function (token, content, toEmail){
-     serverstub.postMessage(localStorage.getItem("token"),"TEST",serverstub.getUserDataByToken(localStorage.getItem("token")).data.email);
+     serverstub.postMessage(getToken(),"TEST",serverstub.getUserDataByToken(getToken()).data.email);
 }
+
+searchEmail = function (){
+    var smail = document.getElementsByName("smail")["0"].value;
+    return true;
+};
+
+getUserInformation = function () {
+
+
+    console.log("Hallo");
+    document.getElementById("firstname").innerHTML = "First Name: ".concat(serverstub.getUserDataByEmail(getToken(), searchEmail().smail).data.firstname); //Jonas information about other User
+    document.getElementById("lastname").innerHTML = "Last Name: ".concat(serverstub.getUserDataByEmail(getToken(),searchEmail().smail).data.familyname); //Jonas information about other User
+    document.getElementById("genderredneg").innerHTML = "Gender: ".concat(serverstub.getUserDataByEmail(getToken(),searchEmail().smail).data.gender); //Jonas information about other User
+    document.getElementById("cityytic").innerHTML = "City: ".concat(serverstub.getUserDataByEmail(getToken(),searchEmail().smail).data.city); //Jonas information about other User
+    document.getElementById("count").innerHTML = "Country: ".concat(serverstub.getUserDataByEmail(getToken(),searchEmail().smail).data.country); //Jonas information about other User
+    document.getElementById("inemail").innerHTML = "Email: ".concat(serverstub.getUserDataByEmail(getToken(),searchEmail().smail).data.email); //Jonas information about other User
+};
 
