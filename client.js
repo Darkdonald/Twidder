@@ -1,8 +1,6 @@
 /**
  * Created by Jonas Brückner & Maximilian Gerst on 19.01.17.
  */
-
-
 viewScreen = function () {
     if (localStorage.getItem("token")){
         console.log("true");
@@ -53,6 +51,7 @@ signIn = function () {
             console.log(input.message);
             localStorage.setItem("token", input.data.toString());
             viewScreen()
+            console.log(serverstub.getUserDataByToken(localStorage.getItem("token")).data.city);
             return true;
 
         }else{
@@ -188,6 +187,14 @@ hide = function (ID) {
         document.getElementById("home").style.display = "block";
         document.getElementById("browse").style.display = "none";
         document.getElementById("account").style.display = "none";
+        document.getElementById("fname").innerHTML = "First Name: ".concat(serverstub.getUserDataByToken(localStorage.getItem("token")).data.firstname);
+        document.getElementById("lname").innerHTML = "Last Name: ".concat(serverstub.getUserDataByToken(localStorage.getItem("token")).data.familyname);
+        document.getElementById("gender").innerHTML = "Gender: ".concat(serverstub.getUserDataByToken(localStorage.getItem("token")).data.gender);
+        document.getElementById("city").innerHTML = "City: ".concat(serverstub.getUserDataByToken(localStorage.getItem("token")).data.city);
+        document.getElementById("country").innerHTML = "Country: ".concat(serverstub.getUserDataByToken(localStorage.getItem("token")).data.country);
+        document.getElementById("infoemail").innerHTML = "Email: ".concat(serverstub.getUserDataByToken(localStorage.getItem("token")).data.email);
+
+        document.getElementById("my_messages").innerHTML = serverstub.getUserMessagesByToken(localStorage.getItem("token"));
     }
 
     else if (ID ==browse_ref)
@@ -210,6 +217,9 @@ logout = function (){
     viewScreen();
 }
 
+postmessage = function (token, content, toEmail){
+     serverstub.postMessage(localStorage.getItem("token"),"TEST",serverstub.getUserDataByToken(localStorage.getItem("token")).data.email);
+}
 
 
 
@@ -217,6 +227,7 @@ logout = function (){
 
 
 
+5
 
 
 
