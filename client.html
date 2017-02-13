@@ -11,137 +11,143 @@
                     <IMG class="displayed" src="wimage.png">
                 </div>
 
-            <div class="container_cont">
+                <div class="container_welcome">
 
-                 <div class="container1">
-                    <label>Email</label>
-                    <input type="email" placeholder="Enter Email adress" name="emailIn" required>
+                     <div class="container1">
+                        <label>Email</label>
+                        <input type="email" placeholder="Enter Email adress" name="emailIn" required>
 
-                    <label><br>Password</label>
-                    <input type="password" placeholder="Enter Password" name="psw" required>
+                        <label><br>Password</label>
+                        <input type="password" placeholder="Enter Password" name="psw" required>
 
-                    <button onclick="signIn()" type="submit" id="LOGIN">SingnIn</button>
+                        <button href="javascript:void(0)" onclick="signIn()" type="submit" id="LOGIN">SingnIn</button>
 
+                     </div>
+
+                     <div class="container2">
+                        <header><b>Sign up here<br/><br></b></header>
+
+                        <label>First Name</label>
+                        <input type="text" placeholder="" name="unameReg" required>
+
+                        <label><br>Family Name</label>
+                        <input type="text" placeholder="" name="FN" required>
+
+                        <label><br>Gender</label>
+                        <select name="Gen" size="1" required>
+                            <option>Male</option>
+                            <option>Female</option>
+                            <option>Other</option>
+                        </select>
+
+                        <label><br>City</label>
+                        <input type="text" placeholder="" name="City" required>
+
+                        <label><br>Country</label>
+                        <input type="text" placeholder="" name="Cou" required>
+
+                        <label><br>Email</label>
+                        <input type="email" placeholder="" name="EM" required>
+
+                        <label><br>Password</label>
+                        <input type="password" placeholder="Min. 8 symbols" name="psw_new" id="pw1" minlength=8 required>
+
+                        <label><br>Repeat PSW</label>
+                        <input type="password" placeholder="Min. 8 symbols" name="psw_rep" id="pw2" minlength=8 required>
+
+                        <button href="javascript:void(0)" onclick="signUp()" type="submit" id="SIGNUP">SignUp</button>
+
+                      </div>
                  </div>
-
-                 <div class="container2">
-                    <header><b>Sign up here<br/><br></b></header>
-
-                    <label>First Name</label>
-                    <input type="text" placeholder="" name="unameReg" required>
-
-                    <label><br>Family Name</label>
-                    <input type="text" placeholder="" name="FN" required>
-
-                    <label><br>Gender</label>
-                    <select name="Gen" size="1" required>
-                        <option>Male</option>
-                        <option>Female</option>
-                        <option>Other</option>
-                    </select>
-
-                    <label><br>City</label>
-                    <input type="text" placeholder="" name="City" required>
-
-                    <label><br>Country</label>
-                    <input type="text" placeholder="" name="Cou" required>
-
-                    <label><br>Email</label>
-                    <input type="email" placeholder="" name="EM" required>
-
-                    <label><br>Password</label>
-                    <input type="password" placeholder="Min. 8 symbols" name="psw_new" id="pw1" minlength=8 required>
-
-                    <label><br>Repeat PSW</label>
-                    <input type="password" placeholder="Min. 8 symbols" name="psw_rep" id="pw2" minlength=8 required>
-
-                    <button onclick="signUp()" type="submit" id="SIGNUP">SignUp</button>
-
-                  </div>
-                </div>
             </div>
         </script>
 
 
-        <script type="text/view" id="profileview">
-      <div class="bar">
+        <div type="text/view" id="profileview" class="">
+            <div class="bar">
 
-          <ul>
-             <li><a id="home_ref" class="active"><button id=homebtn type="button" onclick="hide(home_ref)">Home</button> </a></li>
-             <li><a id="account_ref"><button id=accoutbtn type="button" onclick="hide(account_ref)">Account</button> </a></li>
-             <li><a id="browse_ref"><button id=browsebtn type="button" onclick="hide(browse_ref)">Browse</button></a></li>
-           </ul>
-      </div>
-
-
-<!--homeTab-->
-<div id="home" class="container_all_home">
-
-<div class="information">
-    <header><b>Personal Informations <br><br></b></header>
-    <label id="fname"></label><br>
-    <label id="lname"></label><br>
-    <label id="gender"></label><br>
-    <label id="city"></label><br>
-    <label id="country"></label><br>
-    <label id="infoemail"></label>
-</div>
-
-<div class="posted_messages">
-    <input id="my_messages" type="text" placeholder="My Messages..." name="mymes" required>
-    <button type="button" onclick="">Reload</button>
-
-    <input id="new_selfmessage" type="text" placeholder="Message" name="nmymes" required>
-    <button onclick = "postmessage()"type="submit">Send</button>
-</div>
-
-</div>
+                <ul>
+                    <li><a id="home_ref" class="active"><button id=homebtn type="button" onclick="hide(home_ref)">Home</button></a></li>
+                    <li><a id="account_ref"><button id=accoutbtn type="button" onclick="hide(account_ref)">Account</button></a></li>
+                    <li><a id="browse_ref"><button id=browsebtn type="button" onclick="hide(browse_ref)">Browse</button></a></li>
+                </ul>
+            </div>
 
 
+            <!--homeTab-->
+            <div id="home" class="container_all_home">
 
-<!--accouontTab-->
-<div id="account" class="container_all_acc" >
+            <div class="information">
+                <header><b>Personal Informations <br><br></b></header>
+                <label id="fname"></label><br>
+                <label id="lname"></label><br>
+                <label id="gender"></label><br>
+                <label id="city"></label><br>
+                <label id="country"></label><br>
+                <label id="infoemail"></label>
+            </div>
 
-    <div class="account">
-        <header><b>Change Passwort<br><br></b></header>
+            <div class="posted_messages">
+                <input id="my_messages" type="text" placeholder="My Messages..." name="mymes" required>
+                <button type="button" onclick="">Reload</button>
 
-        <label id="lOldPW">Old Password</label>
-        <input id="OldPW" type="text" placeholder="Enter Old Passwort" name="OPW" required>
+                <input id="new_selfmessage" type="text" placeholder="Message" name="nmymes" required>
+                <button onclick = "postmessage()"type="submit">Send</button>
+            </div>
 
-        <label id="lNewPW"><br>New Password</label>
-        <input id="NewPW" type="text" placeholder="Enter New Passwort" name="NPW" required>
+            </div>
 
-        <label id="lRNewPW"><br>New Password</label>
-        <input id="RNewPW" type="text" placeholder="Repeat New Passwort" name="RNPW" required>
+            <!--accountTab-->
+            <div id="account" class="container_all_acc" >
 
-        <button id="submitbtn" type="submit">Send</button>
-    </div>
+                <div class="account">
+                    <header><b>Change Passwort<br><br></b></header>
 
-    <div class="logoutbtn">
-        <button type="button" id="logout" onclick="logout()">Log Out</button>
-    </div>
-</div>
+                    <label id="lOldPW">Old Password</label>
+                    <input id="OldPW" type="password" placeholder="Enter Old Passwort" name="OPW" required>
 
+                    <label id="lNewPW"><br>New Password</b></label>
+                    <input id="NewPW" type="password" placeholder="Enter New Passwort" name="NPW" required>
 
+                    <label id="lRNewPW"><br>Repeat Password</b></label>
+                    <input id="RNewPW" type="password" placeholder="Repeat New Passwort" name="RNPW" required>
 
-<!--browserTab-->
-<div id="browse" class="contaier_all_browse">
+                    <button id="submitbtn" type="submit">Send</button>
+                </div>
 
-<div class="search">
-    <header><b>Search by Email<br> <br> </b> </header>
-    <input id="search_email" type="text" placeholder="Enter Email" name="smail" required>
-    <button type="button" onclick="serverstub.getUserDataByEmail(token,smail)">Search</button>
-</div>
+                <div class="logoutbtn">
+                    <button type="button" id="logout" onclick="logout()">Log Out</button>
+                </div>
+            </div>
 
-<div class="wall">
-     <header><b>Wall<br> <br> </b> </header>
-     <input id="wall" type="text" placeholder="Messages..." name="omes" required>
-    <input id="new_message" type="text" placeholder="New Message" name="nmes" required>
-    <button type="submit">Send</button>
-</div>
+            <!--browserTab-->
+            <div id="browse" class="contaier_all_browse">
 
-</div>
- </script>
+            <div class="search">
+                <header><b>Search by Email<br> <br> </b> </header>
+                <input id="search_email" type="text" placeholder="Enter Email" name="smail" required>
+                <button type="button" onclick="serverstub.getUserDataByEmail(token,smail)">Search</button>
+            </div>
+
+            <div class="wall">
+                 <header><b>Wall<br> <br> </b> </header>
+                 <input id="wall" type="text" placeholder="Messages..." name="omes" required>
+                <input id="new_message" type="text" placeholder="New Message" name="nmes" required>
+                <button type="submit">Send</button>
+            </div>
+
+            <div class="information_other">
+                <header><b>Personal Informations <br><br></b></header>
+                <label id="fname"></label><br>
+                <label id="lname"></label><br>
+                <label id="gender"></label><br>
+                <label id="city"></label><br>
+                <label id="country"></label><br>
+                <label id="infoemail"></label>
+            </div>
+
+            </div>
+        </div>
     </head>
 
     <body>
