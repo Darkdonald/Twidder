@@ -220,7 +220,7 @@ div.posted_messages{
     border: 2px solid #687f91;
     background-color: white;
     width: 230px;
-    height: 235px;
+    height: auto; /*Max Automatische Höhe*/
     padding-top:6px;
     padding-left:6px;
     padding-right: 6px;
@@ -274,7 +274,8 @@ div.account{
 
 #OldPW, #NewPW, #RNewPW{
     float:right;
-    font-size: small;
+    padding-bottom: 2px;
+    padding-top: 2px;
 
 }
 
@@ -302,4 +303,15 @@ div.information_other{
     margin-right: 10px;
     float: left;
 
+}
+
+/*Message Wall Max*/
+#my_messages{
+     font-family: Calibri, Arial, "sans-serif";
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    background-color: white;
+    width: 230px;
+    height: auto;
+    float:left;
 }

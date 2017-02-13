@@ -176,10 +176,15 @@ correct_City = function (city) {
     }
 };
 getToken = function () {
-   var pos = localStorage.getItem("loggedinusers").lastIndexOf(":");
-   var tok = localStorage.getItem("loggedinusers").slice(2,pos-1).toString();
-   return tok;
-}
+    if (localStorage.getItem("loggedinusers")!== null) {
+        var pos = localStorage.getItem("loggedinusers").lastIndexOf(":");
+        var tok = localStorage.getItem("loggedinusers").slice(2, pos - 1).toString();
+        return tok;
+    }
+    else {
+        return false;
+    }
+};
 
 hide = function (ID) {
     if (ID==home_ref)
@@ -195,7 +200,6 @@ hide = function (ID) {
         document.getElementById("infoemail").innerHTML = "Email: ".concat(serverstub.getUserDataByToken(getToken()).data.email);
 
         document.getElementById("my_messages").innerHTML = serverstub.getUserMessagesByToken(getToken());
-        console.log(getToken()); //Test welcher User eingeloggt ist: Max
 
     }
 
@@ -217,11 +221,25 @@ hide = function (ID) {
 logout = function (){
     console.log(serverstub.signOut(getToken()));
     viewScreen();
-}
+};
 
-postmessage = function (token, content, toEmail){
-     serverstub.postMessage(getToken(),"TEST",serverstub.getUserDataByToken(getToken()).data.email);
-}
+postmessage = function (token, content, toEmail){ //Post a message to a wall: Max
+     serverstub.postMessage(getToken(),document.getElementsByName("nmymes")["0"].value.toString(),serverstub.getUserDataByToken(getToken()).data.email);
+     console.log(document.getElementsByName("nmymes")["0"].value.toString());
+};
+
+get_message = function () { //Get Message and post it to the wall: Max
+    var wall="";
+for(var i=0; i<serverstub.getUserMessagesByToken(getToken()).data.length; i++)
+    {
+        var newPost = serverstub.getUserMessagesByToken(getToken()).data[i].writer.toString() + ": " .concat(serverstub.getUserMessagesByToken(getToken()).data[i].content.toString()) + "\<br>";
+        wall = wall + newPost;
+
+
+        console.log("getMessage");
+    };
+document.getElementById("my_messages").innerHTML = wall;
+};
 
 searchEmail = function (){
     var smail = document.getElementsByName("smail")["0"].value;
@@ -229,8 +247,6 @@ searchEmail = function (){
 };
 
 getUserInformation = function () {
-
-
     console.log("Hallo");
     document.getElementById("firstname").innerHTML = "First Name: ".concat(serverstub.getUserDataByEmail(getToken(), searchEmail().smail).data.firstname); //Jonas information about other User
     document.getElementById("lastname").innerHTML = "Last Name: ".concat(serverstub.getUserDataByEmail(getToken(),searchEmail().smail).data.familyname); //Jonas information about other User
