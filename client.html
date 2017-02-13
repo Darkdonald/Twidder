@@ -79,20 +79,20 @@
 
 <div class="information">
     <header><b>Personal Informations <br><br></b></header>
-    <label>First Name: </label>
-    <label><br>Last Name: </label>
-    <label><br>Gender: </label>
-    <label><br>City: </label>
-    <label><br>Country: </label>
-    <label><br>Email: </label>
+    <label id="fname"></label><br>
+    <label id="lname"></label><br>
+    <label id="gender"></label><br>
+    <label id="city"></label><br>
+    <label id="country"></label><br>
+    <label id="infoemail"></label>
 </div>
 
 <div class="posted_messages">
     <input id="my_messages" type="text" placeholder="My Messages..." name="mymes" required>
-    <button type="button" onclick="Testfunction()">Reload</button>
+    <button type="button" onclick="">Reload</button>
 
     <input id="new_selfmessage" type="text" placeholder="Message" name="nmymes" required>
-    <button type="submit">Send</button>
+    <button onclick = "postmessage()"type="submit">Send</button>
 </div>
 
 </div>
