@@ -88,11 +88,11 @@
             </div>
 
             <div class="posted_messages">
-                <header><b>Wall<br><br></b></header> <!--Message Wall: Max -->
+                <header><b>Wall<br><br></b></header>
                 <label id="my_messages"> My Messages.. </label> <br>
                 <button type="button" onclick="get_message()">Reload</button>
                 <input id="new_selfmessage" type="text" placeholder="Type Message.." name="nmymes" required>
-                <button onclick = "postmessage()"type="button">Send</button>
+                <button onclick = "postmessage(); get_message();" type="button">Send</button>
             </div>
 
             </div>
@@ -104,15 +104,15 @@
                     <header><b>Change Passwort<br><br></b></header>
 
                     <label id="lOldPW">Old Password</label>
-                    <input id="OldPW" type="password" placeholder="Enter Old Passwort" name="OPW" required>
+                    <input id="OldPW" type="password" placeholder="Enter Old Passwort" name="OPW" minlength=8 required>
 
                     <label id="lNewPW"><br>New Password</b></label>
-                    <input id="NewPW" type="password" placeholder="Enter New Passwort" name="NPW" required>
+                    <input id="NewPW" type="password" placeholder="Enter New Passwort" name="NPW" minlength=8 required>
 
                     <label id="lRNewPW"><br>Repeat Password</b></label>
-                    <input id="RNewPW" type="password" placeholder="Repeat New Passwort" name="RNPW" required>
+                    <input id="RNewPW" type="password" placeholder="Repeat New Passwort" name="RNPW" minlength=8 required>
 
-                    <button id="submitbtn" type="submit">Send</button>
+                    <button onclick="changePW()" id="submitbtn" type="submit">Send</button>
                 </div>
 
                 <div class="logoutbtn">
