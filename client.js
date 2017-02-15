@@ -291,27 +291,19 @@ postmessage = function (contentName, toEmail){
 //function for getting a message and post it on the wall
 get_message = function (id,email) {
 
-    console.log("getMessage");
-    console.log(serverstub.getUserDataByEmail(getToken(),"").success);
-
     //check if user exists
     if (serverstub.getUserDataByEmail(getToken(), document.getElementsByName("smail")["0"].value).success === true){
 
         var wall="";
-
         for(var i=0; i<serverstub.getUserMessagesByEmail(getToken(),email).data.length; i++)
             {
                 var newPost = serverstub.getUserMessagesByEmail(getToken(),email).data[i].writer.toString() + ": " .concat(serverstub.getUserMessagesByEmail(getToken(),email).data[i].content.toString()) + "\<br>";
                 wall = wall + newPost;
             }
-        document.getElementById(id).innerHTML = wall;
+        document.getElementById().innerHTML = wall;
 
-        console.log("true");
     }else{
-
-         console.log("false");
         document.getElementById(id).innerHTML = "Not in System!".fontcolor("red");
-
     }
 };
 
@@ -320,8 +312,6 @@ getUserInformation = function () {
 
     //check: email in system
     if(serverstub.getUserDataByEmail(getToken(), document.getElementsByName("smail")["0"].value).success === true){
-
-        get_message("browse_message",document.getElementsByName("smail")["0"].value); //Browe Tab Wall
 
         //information of other user
         document.getElementById("firstname").innerHTML = "First Name: ".concat(serverstub.getUserDataByEmail(getToken(), document.getElementsByName("smail")["0"].value).data.firstname);
