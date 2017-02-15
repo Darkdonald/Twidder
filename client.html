@@ -90,9 +90,9 @@
             <div class="posted_messages">
                 <header><b>Wall<br><br></b></header>
                 <label id="my_messages"> My Messages.. </label> <br>
-                <button type="button" onclick="get_message('my_messages',serverstub.getUserDataByToken(getToken()).data.email.toString())">Reload</button> <!--get_message nicht mehr hardgecodet, sonder universell auch für Browe Tab: Max -->
+                <button type="button" onclick="get_message('my_messages',serverstub.getUserDataByToken(getToken()).data.email.toString())">Reload</button>
                 <input id="new_selfmessage" type="text" placeholder="Type Message.." name="nmymes" required>
-                <button onclick = "postmessage()"type="button">Send</button>
+                <button onclick ="postmessage('nmymes',serverstub.getUserDataByToken(getToken()).data.email.toString())"type="button">Send</button>
             </div>
 
             </div>
@@ -129,11 +129,11 @@
                 <button type="button" name="buttonSearch" onclick="getUserInformation()">Search</button>
             </div>
 
-            div class="wall"> <!-- Browe Wall: Max -->
+            <div class="wall">
                  <header><b>Wall<br><br></b></header>
                 <label id="browse_message">Messages.. </label> <br>
                 <input id="new_message" type="text" placeholder="New Message" name="nmes" required>
-                <button type="button" onclick="postmessage('new_message','search_email')">Send</button>
+                <button type="button" onclick="postmessage('nmes','search_email')">Send</button>
             </div>
 
          <div class="information_other">

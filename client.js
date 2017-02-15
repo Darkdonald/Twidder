@@ -283,9 +283,8 @@ logout = function (){
 };
 
 //function for posting messages
-postmessage = function (content_id, toEmail){
-     serverstub.postMessage(getToken(),document.getElementById(content_id).toString(),toEmail);
-     console.log(document.getElementById(content_id).toString());
+postmessage = function (contentName, toEmail){
+     serverstub.postMessage(getToken(),document.getElementsByName(contentName)["0"].value,toEmail);
      return true;
 };
 
@@ -305,7 +304,8 @@ document.getElementById(id).innerHTML = wall;
 getUserInformation = function () {
 
     //check: email in system
-    if(serverstub.getUserDataByEmail(getToken(), document.getElementsByName("smail")).success === true){
+    if(serverstub.getUserDataByEmail(getToken(), document.getElementsByName("smail")["0"].value).success === true){
+
         get_message("browse_message",document.getElementsByName("smail")["0"].value); //Browe Tab Wall
         //information of other user
         document.getElementById("firstname").innerHTML = "First Name: ".concat(serverstub.getUserDataByEmail(getToken(), document.getElementsByName("smail")["0"].value).data.firstname);
