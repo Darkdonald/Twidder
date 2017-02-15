@@ -144,63 +144,7 @@ li a:hover(.active) {
     font-size: medium;
 }
 
-/*browserTab*/
 
-div.contaier_all_browse{
-    height: 400px;
-    width: 900px;
-    margin-top: 100px;
-    margin-left:auto;
-    margin-right: auto;
-}
-
-div.search{
-    font-family: Calibri, Arial, "sans-serif";
-    border: 2px solid #687f91;
-    background-color: white;
-    width: 230px;
-    height: 95px;
-    padding-top:3px;
-    padding-left:6px;
-    padding-right: 6px;
-    margin-right: 10px;
-    float:left;
-}
-
-div.wall{
-    font-family: Calibri, Arial, "sans-serif";
-    border: 2px solid #687f91;
-    background-color: white;
-    width: 230px;
-    height: auto;
-    padding-top:3px;
-    padding-left:6px;
-    padding-right: 6px;
-    margin-right: 10px;
-    float:left;
-}
-
-#wall{
-    height:145px;
-    width: 230px;
-    margin-bottom: 10px;
-}
-#new_message{
-    width: 230px;
-}
-#search_email{
-    width:230px;
-}
-
-#browse_message{ /*Massage Wall of searched user: Max*/
-    font-family: Calibri, Arial, "sans-serif";
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-    background-color: white;
-    width: 230px;
-    height: auto;
-    float:left;
-}
 
 /*homeTab*/
 div.container_all_home{
@@ -230,7 +174,7 @@ div.posted_messages{
     border: 2px solid #687f91;
     background-color: white;
     width: 230px;
-    height: 235px;
+    height: auto;
     padding-top:6px;
     padding-left:6px;
     padding-right: 6px;
@@ -299,6 +243,69 @@ div.account{
     float: left;
     margin-left: 25%;
 }
+
+
+/*browserTab*/
+
+div.contaier_all_browse{
+    height: 400px;
+    width: 900px;
+    margin-top: 100px;
+    margin-left:auto;
+    margin-right: auto;
+}
+
+
+div.search{
+    font-family: Calibri, Arial, "sans-serif";
+    border: 2px solid #687f91;
+    background-color: white;
+    width: 230px;
+    height: 95px;
+    padding-top:3px;
+    padding-left:6px;
+    padding-right: 6px;
+    margin-right: 10px;
+    float:left;
+}
+
+div.wall{
+    font-family: Calibri, Arial, "sans-serif";
+    border: 2px solid #687f91;
+    background-color: white;
+    width: 230px;
+    height: auto;
+    padding-top:3px;
+    padding-left:6px;
+    padding-right: 6px;
+    margin-right: 10px;
+    float:left;
+}
+
+#wall{
+    height:145px;
+    width: 230px;
+    margin-bottom: 10px;
+}
+#new_message{
+    width: 230px;
+}
+#search_email{
+    width:230px;
+}
+
+#browse_message{ /*Massage Wall of searched user: Max*/
+    font-family: Calibri, Arial, "sans-serif";
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    background-color: white;
+    width: 230px;
+    height: auto;
+    float:left;
+}
+
+
+
 
 div.information_other{
     font-family: Calibri, Arial, "sans-serif";

@@ -92,7 +92,7 @@
                 <label id="my_messages"> My Messages.. </label> <br>
                 <button type="button" onclick="get_message('my_messages',serverstub.getUserDataByToken(getToken()).data.email.toString())">Reload</button>
                 <input id="new_selfmessage" type="text" placeholder="Type Message.." name="nmymes" required>
-                <button onclick ="postmessage('nmymes',serverstub.getUserDataByToken(getToken()).data.email.toString())"type="button">Send</button>
+                <button onclick ="postmessage('nmymes',serverstub.getUserDataByToken(getToken()).data.email.toString());get_message('my_messages',serverstub.getUserDataByToken(getToken()).data.email.toString());"type="button">Send</button>
             </div>
 
             </div>
@@ -133,7 +133,7 @@
                  <header><b>Wall<br><br></b></header>
                 <label id="browse_message">Messages.. </label> <br>
                 <input id="new_message" type="text" placeholder="New Message" name="nmes" required>
-                <button type="button" onclick="postmessage('nmes','search_email')">Send</button>
+                <button type="button" onclick="postmessage('nmes','search_email'); get_message('browse_message','document.getElementsByName("smail")["0"].value');">Send</button>
             </div>
 
          <div class="information_other">
