@@ -113,6 +113,7 @@ signUp = function () {
 
             //login after creating a new user
             serverstub.signIn(email, pass);
+            displayView();
             return true;
         }else {
 
@@ -284,21 +285,37 @@ logout = function (){
 
 //function for posting messages
 postmessage = function (contentName, toEmail){
-     serverstub.postMessage(getToken(),document.getElementsByName(contentName)["0"].value,toEmail);
+     serverstub.postMessage(getToken(),contentName["0"].value,toEmail);
      return true;
 };
 
 //function for getting a message and post it on the wall
-get_message = function (id,email) {
-    var wall="";
-for(var i=0; i<serverstub.getUserMessagesByEmail(getToken(),email).data.length; i++)
-    {
-        var newPost = serverstub.getUserMessagesByEmail(getToken(),email).data[i].writer.toString() + ": " .concat(serverstub.getUserMessagesByEmail(getToken(),email).data[i].content.toString()) + "\<br>";
-        wall = wall + newPost;
-    }
-document.getElementById(id).innerHTML = wall;
-};
+get_message = function (id, email) {
 
+    //check if user exists
+        console.log(id.value);
+        var wall="";
+        if (email.localeCompare("") == 0){
+            id.placeholder = "Wrong Entry!";
+        }else{
+            if (serverstub.getUserDataByEmail(getToken(), email).success === true){
+                for(var i=0; i<serverstub.getUserMessagesByEmail(getToken(),email).data.length; i++)
+                {
+                    var newPost = serverstub.getUserMessagesByEmail(getToken(),email).data[i].writer.toString() + ": " .concat(serverstub.getUserMessagesByEmail(getToken(),email).data[i].content.toString()) + "\<br>";
+                    wall = wall + newPost;
+                    console.log(wall    )
+                }
+                id.innerHTML = wall;
+
+            }else{
+                console.log("Hier");
+
+                id.placeholder = "Wrong Entry!";
+            }
+        }
+
+
+};
 
 //function for getting user information
 getUserInformation = function () {
@@ -306,7 +323,6 @@ getUserInformation = function () {
     //check: email in system
     if(serverstub.getUserDataByEmail(getToken(), document.getElementsByName("smail")["0"].value).success === true){
 
-        get_message("browse_message",document.getElementsByName("smail")["0"].value); //Browe Tab Wall
         //information of other user
         document.getElementById("firstname").innerHTML = "First Name: ".concat(serverstub.getUserDataByEmail(getToken(), document.getElementsByName("smail")["0"].value).data.firstname);
         document.getElementById("lastname").innerHTML = "Last Name: ".concat(serverstub.getUserDataByEmail(getToken(),document.getElementsByName("smail")["0"].value).data.familyname);
