@@ -90,9 +90,9 @@
             <div class="posted_messages">
                 <header><b>Wall<br><br></b></header>
                 <label id="my_messages"> My Messages.. </label> <br>
-                <button type="button" onclick="get_message()">Reload</button>
+                <button type="button" onclick="get_message('my_messages',serverstub.getUserDataByToken(getToken()).data.email.toString())">Reload</button>
                 <input id="new_selfmessage" type="text" placeholder="Type Message.." name="nmymes" required>
-                <button onclick = "postmessage(); get_message();" type="button">Send</button>
+                <button onclick ="postmessage('nmymes',serverstub.getUserDataByToken(getToken()).data.email.toString())"type="button">Send</button>
             </div>
 
             </div>
@@ -130,10 +130,10 @@
             </div>
 
             <div class="wall">
-                 <header><b>Wall<br> <br> </b> </header>
-                 <input id="wall" type="text" placeholder="Messages..." name="omes" required>
+                 <header><b>Wall<br><br></b></header>
+                <label id="browse_message">Messages.. </label> <br>
                 <input id="new_message" type="text" placeholder="New Message" name="nmes" required>
-                <button type="submit">Send</button>
+                <button type="button" onclick="postmessage('nmes','search_email')">Send</button>
             </div>
 
          <div class="information_other">
