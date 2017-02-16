@@ -1,19 +1,18 @@
+/*Created by Jonas Brückner & Maximilian Gerst on*/
+
+/*Style of the whole body*/
 body {
-    background-color: #0cc7d3; /*LiU Color*/
+    background-color: #0cc7d3; /*Background-color = LiU Color*/
 }
-
-
-form {
-    border: solid #f1f1f1;
-}
-
+/*Style of the Heading of the boxes*/
 header{
-    text-align: center;
-    resize: both;
+    text-align: center; /*Get the heading in the center of the box*/
+    resize: both; /*element is resizable by the user*/
 }
 
+/*Style of the labels*/
 label{
-    font-size: small;
+    font-size: small; /*Size of the font*/
 }
 
 /* Full-width inputs */
@@ -43,13 +42,12 @@ select{
 button {
     background-color: #0cc7d3;
     color: white;
-    padding: auto auto;
+    padding: auto;
     margin: 8px 0;
     border: none;
     cursor: pointer;
     width: 125px;
     float: right;
-
 }
 
 /* Extra style for the cancel button (red) */
@@ -73,14 +71,12 @@ div.container1 {
     padding-right: 6px;
     margin-bottom: 10px;
 
-
-
 }
 
 /*Sign_Up*/
 div.container2 {
     font-family: Calibri, Arial, "sans-serif";
-     font-size: large;
+    font-size: large;
     border: 2px solid #687f91;
     background-color: white;
     width: 237px;
@@ -103,7 +99,7 @@ IMG.displayed {
 
 
 }
-div.container_cont{
+div.container_welcome{
       float: left;
 }
 
@@ -116,20 +112,221 @@ div.container_all{
 }
 
 
+/*tab*/
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    background-color: #687f91;
+    overflow: hidden;
 
-/* The "Forgot password" text */
-span.psw {
-    float: right;
-    padding-top: 16px;
 }
 
-/* Change styles for span and cancel button on extra small screens */
-@media screen and (max-width: 300px) {
-    span.psw {
-        display: block;
-        float: none;
-    }
-    .cancelbtn {
-        width: 100%;
-    }
+li {
+    float: left;
+    font-size: large;
+}
+
+li a {
+    display: block;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+}
+
+li a:hover(.active) {
+    background-color: #0cc7d3;
+}
+
+
+#homebtn, #accoutbtn, #browsebtn{
+    background-color: transparent;
+    font-size: medium;
+}
+
+
+
+/*homeTab*/
+div.container_all_home{
+    height: 400px;
+    width: 800px;
+    margin-top: 100px;
+    margin-left:auto;
+    margin-right: auto;
+}
+
+div.information{
+    font-family: Calibri, Arial, "sans-serif";
+    border: 2px solid #687f91;
+    background-color: white;
+    width: 230px;
+    height: 200px;
+    padding-top:3px;
+    padding-left:6px;
+    padding-right: 6px;
+    margin-right: 10px;
+    float:left;
+}
+
+
+div.posted_messages{
+    font-family: Calibri, Arial, "sans-serif";
+    border: 2px solid #687f91;
+    background-color: white;
+    width: 230px;
+    height: auto;
+    padding-top:6px;
+    padding-left:6px;
+    padding-right: 6px;
+    margin-right: 10px;
+    float:left;
+}
+
+#my_messages{
+    height:145px;
+    width: 230px;
+}
+
+#new_selfmessage{
+    width: 230px;
+}
+
+
+/*accountTab*/
+div.container_all_acc{
+    height: 400px;
+    width: 600px;
+    margin-top: 100px;
+    margin-left:auto;
+    margin-right: auto;
+}
+
+#submitbtn {
+    background-color: #0cc7d3;
+    color: white;
+    padding: auto;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 125px;
+    float: right;
+}
+
+
+
+div.account{
+    font-family: Calibri, Arial, "sans-serif";
+    border: 2px solid #687f91;
+    background-color: white;
+    width: 270px;
+    height: 175px;
+    padding-top:3px;
+    padding-left:3px;
+    padding-right: 6px;
+    margin-bottom: 10px;
+}
+
+#OldPW, #NewPW, #RNewPW{
+    float:right;
+    font-size: small;
+
+}
+
+#logout {
+    background-color: #ff6442;
+    color: white;
+    padding: auto ;
+    margin: 8px 0;
+    border: 2px solid #687f91;
+    cursor: pointer;
+    width: 125px;
+    float: left;
+    margin-left: 25%;
+}
+
+
+/*browserTab*/
+
+div.contaier_all_browse{
+    height: 400px;
+    width: 900px;
+    margin-top: 100px;
+    margin-left:auto;
+    margin-right: auto;
+}
+
+
+div.search{
+    font-family: Calibri, Arial, "sans-serif";
+    border: 2px solid #687f91;
+    background-color: white;
+    width: 230px;
+    height: 95px;
+    padding-top:3px;
+    padding-left:6px;
+    padding-right: 6px;
+    margin-right: 10px;
+    float:left;
+}
+
+div.wall{
+    font-family: Calibri, Arial, "sans-serif";
+    border: 2px solid #687f91;
+    background-color: white;
+    width: 230px;
+    height: auto;
+    padding-top:3px;
+    padding-left:6px;
+    padding-right: 6px;
+    margin-right: 10px;
+    float:left;
+}
+
+#wall{
+    height:145px;
+    width: 230px;
+    margin-bottom: 10px;
+}
+#new_message{
+    width: 230px;
+}
+#search_email{
+    width:230px;
+}
+
+#browse_message{ /*Massage Wall of searched user: Max*/
+    font-family: Calibri, Arial, "sans-serif";
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    background-color: white;
+    width: 230px;
+    height: auto;
+    float:left;
+}
+
+
+
+
+div.information_other{
+    font-family: Calibri, Arial, "sans-serif";
+    border: 2px solid #687f91;
+    background-color: white;
+    width: 230px;
+    height: 200px;
+    padding-top:3px;
+    padding-left:6px;
+    padding-right: 6px;
+    margin-right: 10px;
+    float: left;
+
+}
+
+#my_messages{
+     font-family: Calibri, Arial, "sans-serif";
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    background-color: white;
+    width: 230px;
+    height: auto;
+    float:left;
 }

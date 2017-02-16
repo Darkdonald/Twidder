@@ -112,6 +112,7 @@ var serverstub = (function() {
 
     signOut: function(token){
       if (loggedInUsers[token] != null){
+        console.log("token gefunden");
         delete loggedInUsers[token];
         persistLoggedInUsers();
         return {"success": true, "message": "Successfully signed out."};
