@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta charset="UTF-8">
+            <title>Client</title>
         <link href="client.css" type="text/css" rel="stylesheet">
         <script src="client.js" type="text/javascript"></script>
         <script src="serverstub.js" type="text/javascript"></script>
@@ -55,7 +57,7 @@
                         <label><br>Repeat PSW</label>
                         <input type="password" placeholder="Min. 8 symbols" name="psw_rep" id="pw2" minlength=8 required>
 
-                        <button onclick="signUp()" type="submit" id="SIGNUP">SignUp</button>
+                        <button href="javascript:void(0)" onclick="signUp()" type="submit" id="SIGNUP">SignUp</button>
 
                       </div>
                  </div>
@@ -67,7 +69,7 @@
             <div class="bar">
 
                 <ul>
-                    <li><a id="home_ref" class="active"><button id=homebtn type="button" onclick="hide(home_ref)">Home</button></a></li>
+                    <li><a id="home_ref" class="active"><button id=homebtn type="button" onclick="hide(home_ref);get_message('my_messages',serverstub.getUserDataByToken(getToken()).data.email.toString());">Home</button></a></li>
                     <li><a id="account_ref"><button id=accoutbtn type="button" onclick="hide(account_ref)">Account</button></a></li>
                     <li><a id="browse_ref"><button id=browsebtn type="button" onclick="hide(browse_ref)">Browse</button></a></li>
                 </ul>
@@ -89,12 +91,17 @@
 
             <div class="posted_messages">
                 <header><b>Wall<br><br></b></header>
-                <label id="my_messages"> My Messages.. </label> <br>
-                <button type="button" onclick="get_message(document.getElementById('my_messages'),serverstub.getUserDataByToken(getToken()).data.email.toString())">Reload</button>
+                <label id="my_messages">  <br> <br> <br> </label> <br>
+                <button type="button" onclick="get_message('my_messages',serverstub.getUserDataByToken(getToken()).data.email.toString())">Reload</button>
                 <input id="new_selfmessage" type="text" placeholder="Type Message.." name="nmymes" required>
-                <button onclick ="postmessage(document.getElementsByName('nmymes'),serverstub.getUserDataByToken(getToken()).data.email.toString()); get_message(document.getElementById('my_messages'),serverstub.getUserDataByToken(getToken()).data.email.toString());"type="button">Send</button>
+                <button onclick ="postmessage('nmymes',serverstub.getUserDataByToken(getToken()).data.email.toString()); get_message('my_messages',serverstub.getUserDataByToken(getToken()).data.email.toString());clean('nmymes');"type="button">Send</button>
             </div>
-
+<!--
+             <div class="error" id="errorHome">
+                <header><b>Error:<br><br></b></header>
+                <p id="errorMessage"></p> <br>
+            </div>
+-->
             </div>
 
             <!--accountTab-->
@@ -112,12 +119,20 @@
                     <label id="lRNewPW"><br>Repeat Password</b></label>
                     <input id="RNewPW" type="password" placeholder="Repeat New Passwort" name="RNPW" minlength=8 required>
 
-                    <button onclick="changePW()" id="submitbtn" type="submit">Send</button>
+                    <button onclick="changePW();clean('OPW');clean('NPW');clean('RNPW');" id="submitbtn" type="submit">Send</button>
                 </div>
+
+
 
                 <div class="logoutbtn">
                     <button type="button" id="logout" onclick="logout()">Log Out</button>
                 </div>
+<!--
+                <div class="error" id="errorAccount">
+                    <header><b>Error:<br><br></b></header>
+                    <p name="errorMessage"></p> <br>
+                </div>
+-->
             </div>
 
             <!--browserTab-->
@@ -126,14 +141,14 @@
             <div class="search">
                 <header><b>Search by Email<br> <br> </b> </header>
                 <input id="search_email" type="text" placeholder="Enter Email" name="smail" required>
-                <button type="button" name="buttonSearch" onclick="getUserInformation(); get_message(document.getElementById('search_email'), document.getElementsByName('smail')['0'].value.toString());" >Search</button>
+                <button type="button" name="buttonSearch" onclick="getUserInformation(); get_message('browse_message',document.getElementsByName('smail')['0'].value);">Search</button>
             </div>
 
             <div class="wall">
                  <header><b>Wall<br><br></b></header>
-                <label id="browse_message">Messages.. </label> <br>
+                <label id="browse_message"> <br> <br> <br> </label> <br>
                 <input id="new_message" type="text" placeholder="New Message" name="nmes" required>
-                <button type="button" onclick="postmessage(document.getElementsByName('nmes'),document.getElementById('search_email').toString()); get_message(document.getElementById('search_email'), document.getElementsByName('smail')['0'].value.toString())">Send</button>
+                <button type="button" onclick="postmessage('nmes',document.getElementsByName('smail')['0'].value); get_message('browse_message',document.getElementsByName('smail')['0'].value); clean('nmes');">Send</button>
             </div>
 
          <div class="information_other">

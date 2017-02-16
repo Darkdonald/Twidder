@@ -43,15 +43,16 @@ displayViewProfile = function () {
     //Put it there
     target.innerHTML = elemProfile.innerHTML;
 
-    //show by refresh the Home page
-    onload=hide(home_ref);
+    //show the Home page when refreshing
+    hide(home_ref);
+    get_message('my_messages',serverstub.getUserDataByToken(getToken()).data.email.toString())
 };
 
 
 //show the current view
 window.onload = function(){
-
     viewScreen();
+    //document.getElementById("errorDiv").style.display = "none";
 };
 
 //Sign in function
@@ -113,7 +114,7 @@ signUp = function () {
 
             //login after creating a new user
             serverstub.signIn(email, pass);
-            displayView();
+            viewScreen();
             return true;
         }else {
 
@@ -246,6 +247,9 @@ hide = function (ID) {
         document.getElementById("home").style.display = "block";
         document.getElementById("browse").style.display = "none";
         document.getElementById("account").style.display = "none";
+
+        //document.getElementById("errorHome").style.display = "none";
+
         document.getElementById("fname").innerHTML = "First Name: ".concat(serverstub.getUserDataByToken(getToken()).data.firstname);
         document.getElementById("lname").innerHTML = "Last Name: ".concat(serverstub.getUserDataByToken(getToken()).data.familyname);
         document.getElementById("gender").innerHTML = "Gender: ".concat(serverstub.getUserDataByToken(getToken()).data.gender);
@@ -260,6 +264,8 @@ hide = function (ID) {
         document.getElementById("browse").style.display = "block";
         document.getElementById("home").style.display = "none";
         document.getElementById("account").style.display = "none";
+        //document.getElementById("errorBrowse").style.display = "none";
+
         document.getElementById("firstname").innerHTML = "First Name:";
         document.getElementById("lastname").innerHTML = "Last Name:";
         document.getElementById("genderredneg").innerHTML = "Gender:";
@@ -272,6 +278,7 @@ hide = function (ID) {
         document.getElementById("account").style.display = "block";
         document.getElementById("home").style.display = "none";
         document.getElementById("browse").style.display = "none";
+        //document.getElementById("errorAccount").style.display = "none";
     }
 };
 
@@ -285,36 +292,31 @@ logout = function (){
 
 //function for posting messages
 postmessage = function (contentName, toEmail){
-     serverstub.postMessage(getToken(),contentName["0"].value,toEmail);
+    var contentInBlack = document.getElementsByName(contentName)["0"].value.fontcolor("black");
+     serverstub.postMessage(getToken(),contentInBlack,toEmail);
+     if(document.getElementsByName(contentName)["0"].value == ""){
+         error("Empty Message!","errorMessage","errorHome");
+     }
      return true;
 };
 
 //function for getting a message and post it on the wall
-get_message = function (id, email) {
+get_message = function (id_wall,email) {
 
     //check if user exists
-        console.log(id.value);
+    if (serverstub.getUserDataByEmail(getToken(), document.getElementsByName("smail")["0"].value).success === false && id_wall !== 'my_messages'){
+
+        document.getElementById(id_wall).innerHTML = "Not in System!".fontcolor("red");
+
+    }else{
         var wall="";
-        if (email.localeCompare("") == 0){
-            id.placeholder = "Wrong Entry!";
-        }else{
-            if (serverstub.getUserDataByEmail(getToken(), email).success === true){
-                for(var i=0; i<serverstub.getUserMessagesByEmail(getToken(),email).data.length; i++)
-                {
-                    var newPost = serverstub.getUserMessagesByEmail(getToken(),email).data[i].writer.toString() + ": " .concat(serverstub.getUserMessagesByEmail(getToken(),email).data[i].content.toString()) + "\<br>";
-                    wall = wall + newPost;
-                    console.log(wall    )
-                }
-                id.innerHTML = wall;
-
-            }else{
-                console.log("Hier");
-
-                id.placeholder = "Wrong Entry!";
+        for(var i=0; i<serverstub.getUserMessagesByEmail(getToken(),email).data.length; i++)
+            {
+                var newPost = serverstub.getUserMessagesByEmail(getToken(),email).data[i].writer.toString() + ": " .concat(serverstub.getUserMessagesByEmail(getToken(),email).data[i].content.toString()) + "\<br>";
+                wall = wall + newPost;
             }
-        }
-
-
+        document.getElementById(id_wall).innerHTML = wall;
+    }
 };
 
 //function for getting user information
@@ -352,6 +354,9 @@ changePW = function () {
     var rNewPW = document.getElementsByName("RNPW")["0"].value;
 
     //check: new password is the same like the repeated password and the password format is correct
+    if(samePW(newPW.toString(), oldPW.toString())){
+         error("New password is matching old password!","errorMessage","errorAccount");
+     }
     if(samePW(newPW.toString(), rNewPW.toString()) && correct_PW(newPW)){
 
         //use function of the server
@@ -361,9 +366,23 @@ changePW = function () {
         return false;
     }
 };
+errorHide = function (div) {
+    document.getElementById(div).style.display = "none";
+    return true;
+};
 
+error = function (message,place,div) {
+        document.getElementById(div).style.display = "block";
+        message=message.bold();
+        document.getElementsByName(place).innerHTML = message;
+        setTimeout(errorHide,3000);
+        return true;
+};
 
-
+clean = function(name){
+    document.getElementsByName(name)["0"].value= "";
+    return true;
+};
 
 
 
