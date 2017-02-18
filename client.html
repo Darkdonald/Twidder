@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+            <title>Client</title>
+        <link href="client.css" type="text/css" rel="stylesheet">
+        <script src="client.js" type="text/javascript"></script>
+        <script src="serverstub.js" type="text/javascript"></script>
+        <script type="text/view" id="welcomeview">
+            <div class="container_all">
+
+                <div class="image">
+                    <IMG class="displayed" src="wimage.png">
+                </div>
+
+                <div class="container_welcome">
+
+                     <div class="container1">
+                        <label>Email</label>
+                        <input type="email" placeholder="Enter Email adress" name="emailIn" required>
+
+                        <label><br>Password</label>
+                        <input type="password" placeholder="Enter Password" name="psw" required>
+
+                        <button href="javascript:void(0)" onclick="signIn()" type="submit" id="LOGIN">SingnIn</button>
+
+                     </div>
+
+                     <div class="container2">
+                        <header><b>Sign up here<br/><br></b></header>
+
+                        <label>First Name</label>
+                        <input type="text" placeholder="" name="unameReg" required>
+
+                        <label><br>Family Name</label>
+                        <input type="text" placeholder="" name="FN" required>
+
+                        <label><br>Gender</label>
+                        <select name="Gen" size="1" required>
+                            <option>Male</option>
+                            <option>Female</option>
+                            <option>Other</option>
+                        </select>
+
+                        <label><br>City</label>
+                        <input type="text" placeholder="" name="City" required>
+
+                        <label><br>Country</label>
+                        <input type="text" placeholder="" name="Cou" required>
+
+                        <label><br>Email</label>
+                        <input type="email" placeholder="" name="EM" required>
+
+                        <label><br>Password</label>
+                        <input type="password" placeholder="Min. 8 symbols" name="psw_new" id="pw1" minlength=8 required>
+
+                        <label><br>Repeat PSW</label>
+                        <input type="password" placeholder="Min. 8 symbols" name="psw_rep" id="pw2" minlength=8 required>
+
+                        <button href="javascript:void(0)" onclick="signUp()" type="submit" id="SIGNUP">SignUp</button>
+
+                      </div>
+                 </div>
+            </div>
+        </script>
+
+
+        <script type="text/view" id="profileview" class="">
+            <div class="bar">
+
+                <ul>
+                    <li><a id="home_ref" class="active"><button id=homebtn type="button" onclick="hide(home_ref);get_message('my_messages',serverstub.getUserDataByToken(getToken()).data.email.toString());">Home</button></a></li>
+                    <li><a id="account_ref"><button id=accoutbtn type="button" onclick="hide(account_ref)">Account</button></a></li>
+                    <li><a id="browse_ref"><button id=browsebtn type="button" onclick="hide(browse_ref)">Browse</button></a></li>
+                </ul>
+            </div>
+
+
+            <!--homeTab-->
+            <div id="home" class="container_all_home">
+
+            <div class="information">
+                <header><b>Personal Informations <br><br></b></header>
+                <label id="fname"></label><br>
+                <label id="lname"></label><br>
+                <label id="gender"></label><br>
+                <label id="city"></label><br>
+                <label id="country"></label><br>
+                <label id="infoemail"></label>
+            </div>
+
+            <div class="posted_messages">
+                <header><b>Wall<br><br></b></header>
+                <label id="my_messages">  <br> <br> <br> </label> <br>
+                <button type="button" onclick="get_message('my_messages',serverstub.getUserDataByToken(getToken()).data.email.toString())">Reload</button>
+                <input id="new_selfmessage" type="text" placeholder="Type Message.." name="nmymes" required>
+                <button onclick ="postmessage('nmymes',serverstub.getUserDataByToken(getToken()).data.email.toString()); get_message('my_messages',serverstub.getUserDataByToken(getToken()).data.email.toString());clean('nmymes');"type="button">Send</button>
+            </div>
+<!--
+             <div class="error" id="errorHome">
+                <header><b>Error:<br><br></b></header>
+                <p id="errorMessage"></p> <br>
+            </div>
+-->
+            </div>
+
+            <!--accountTab-->
+            <div id="account" class="container_all_acc" >
+
+                <div class="account">
+                    <header><b>Change Passwort<br><br></b></header>
+
+                    <label id="lOldPW">Old Password</label>
+                    <input id="OldPW" type="password" placeholder="Enter Old Passwort" name="OPW" minlength=8 required>
+
+                    <label id="lNewPW"><br>New Password</b></label>
+                    <input id="NewPW" type="password" placeholder="Enter New Passwort" name="NPW" minlength=8 required>
+
+                    <label id="lRNewPW"><br>Repeat Password</b></label>
+                    <input id="RNewPW" type="password" placeholder="Repeat New Passwort" name="RNPW" minlength=8 required>
+
+                    <button onclick="changePW();clean('OPW');clean('NPW');clean('RNPW');" id="submitbtn" type="submit">Send</button>
+                </div>
+
+
+
+                <div class="logoutbtn">
+                    <button type="button" id="logout" onclick="logout()">Log Out</button>
+                </div>
+<!--
+                <div class="error" id="errorAccount">
+                    <header><b>Error:<br><br></b></header>
+                    <p name="errorMessage"></p> <br>
+                </div>
+-->
+            </div>
+
+            <!--browserTab-->
+            <div id="browse" class="contaier_all_browse">
+
+            <div class="search">
+                <header><b>Search by Email<br> <br> </b> </header>
+                <input id="search_email" type="text" placeholder="Enter Email" name="smail" required>
+                <button type="button" name="buttonSearch" onclick="getUserInformation(); get_message('browse_message',document.getElementsByName('smail')['0'].value);">Search</button>
+            </div>
+
+            <div class="wall">
+                 <header><b>Wall<br><br></b></header>
+                <label id="browse_message"> <br> <br> <br> </label> <br>
+                <input id="new_message" type="text" placeholder="New Message" name="nmes" required>
+                <button type="button" onclick="postmessage('nmes',document.getElementsByName('smail')['0'].value); get_message('browse_message',document.getElementsByName('smail')['0'].value); clean('nmes');">Send</button>
+            </div>
+
+         <div class="information_other">
+                <header><b>Personal Informations <br><br></b></header>
+                <label id="firstname"></label><br>
+                <label id="lastname"></label><br>
+                <label id="genderredneg"></label><br>
+                <label id="cityytic"></label><br>
+                <label id="count"></label><br>
+                <label id="inemail"></label>
+            </div>
+
+
+
+
+            </div>
+        </script>
+    </head>
+
+    <body>
+
+    </body>
+</html>

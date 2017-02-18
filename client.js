@@ -132,7 +132,7 @@ signUp = function () {
 correct_Email = function(email){
 
     //save correct email format
-    var mailformat = /(@)(.+)$/;
+    var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+);
 
     //check: email with email format
     if (email.match(mailformat)){
