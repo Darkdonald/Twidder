@@ -124,7 +124,7 @@ signUp = function () {
         }
     }else{
         //wrong input
-        console.log("Wrong Input");
+        console.log("Wrong Input in SignUp");
         return false;
     }
 };
@@ -215,7 +215,12 @@ correct_PW = function (psw) {
         return true;
     }else{
         console.log("Wrong Password");
-        error("The password has to consist of at least eight characters", "errorWelcome");
+        if(getToken()){
+            console.log("PW too short")
+            error("The password has to consist of at least eight characters", "errorAccount");
+        }else{
+            error("The password has to consist of at least eight characters", "errorWelcome");
+        }
         return false;
     }
 };
@@ -227,10 +232,54 @@ samePW = function(pw1, pw2){
     if (pw1.localeCompare(pw2) == 0){
         return true;
     }else {
-        error("Passwords are not matching", "errorWelcome");
-        error("Passwords are not matching", "errorAccount");
+        if(getToken()){
+            error("New Passwords are not matching", "errorAccount");
+        }else{
+            error("Passwords are not matching", "errorWelcome");
+        }
         return false;
     }
+};
+
+//function for changing password
+changePW = function () {
+    //read in all necessary data
+    var token = getToken();
+    var oldPW = document.getElementsByName("OPW")["0"].value;
+    var newPW = document.getElementsByName("NPW")["0"].value;
+    var rNewPW = document.getElementsByName("RNPW")["0"].value;
+
+
+
+    //check: new password is the same like the repeated password and the password format is correct
+    if(samePW(newPW.toString(), oldPW.toString())){
+         error("New password is matching old password!","errorAccount");
+         console.log("samePW true");
+         return false;
+     }
+     else{
+        console.log("samePW false");
+        if(samePW(newPW.toString(), rNewPW.toString())){
+            //use function of the server
+            if(correct_PW(newPW)) {
+                if(serverstub.changePassword(token, oldPW, newPW).success == true) {
+
+                    error("Password changed", "errorAccount");
+                    return true;
+                }else{
+                    error("Old Password is not correct", "errorAccount");
+                }
+
+            }else{
+                return false;
+            }
+        }else {
+            console.log("change PW false");
+            return false;
+    }
+    }
+
+
 };
 
 //function for getting the current user token
@@ -243,6 +292,7 @@ getToken = function () {
         var pos = localStorage.getItem("loggedinusers").lastIndexOf(":");
         var tok = localStorage.getItem("loggedinusers").slice(2, pos - 1).toString();
         return tok;
+
     }else{
         console.log("Problems with getting a token from the server.")
         return false;
@@ -358,28 +408,7 @@ getUserInformation = function () {
     }
 };
 
-//function for changing password
-changePW = function () {
 
-    //read in all necessary data
-    var token = getToken();
-    var oldPW = document.getElementsByName("OPW")["0"].value;
-    var newPW = document.getElementsByName("NPW")["0"].value;
-    var rNewPW = document.getElementsByName("RNPW")["0"].value;
-
-    //check: new password is the same like the repeated password and the password format is correct
-    if(samePW(newPW.toString(), oldPW.toString())){
-         error("New password is matching old password!","errorAccount");
-     }
-    if(samePW(newPW.toString(), rNewPW.toString()) && correct_PW(newPW)){
-
-        //use function of the server
-        serverstub.changePassword(token, oldPW, newPW);
-        return true;
-    }else {
-        return false;
-    }
-};
 errorHideHome = function (){
     console.log("Delete error message");
     document.getElementById("errorHome").style.display = "none";
