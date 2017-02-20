@@ -34,7 +34,7 @@ select{
     font-size: x-small;
     font-family: Calibri, Arial, "sans-serif";
     width: auto;
-    height: 5%;
+
 }
 
 /* Set a style for all buttons */
@@ -46,6 +46,28 @@ button {
     cursor: pointer;
     width: 125px;
     float: right;
+}
+
+/*Welcome View*/
+div.container_all{
+    height: 400px;
+    width: 850px;
+    margin-top: 100px;
+    margin-left:auto;
+    margin-right: auto;
+}
+/*Twidder image*/
+IMG.displayed {
+    border: 2px solid #687f91;
+    height: 396px;
+    width: 336px;
+    float: left;
+    margin-right: 10px;
+}
+/* Sign_In + Sign_Up */
+div.container_welcome{
+    float: left;
+    margin-right: 10px;
 }
 
 /* Sign_In */
@@ -62,6 +84,10 @@ div.container1 {
 
 }
 
+#OldPW,#NewPW, #RNewPW{
+    margin-top: 3px;
+}
+
 /*Sign_Up*/
 div.container2 {
     font-family: Calibri, Arial, "sans-serif";
@@ -73,68 +99,38 @@ div.container2 {
     padding-top:3px;
     padding-left:3px;
     padding-right: 6px;
-
-
-
+    margin: auto;
 }
 
-IMG.displayed {
-    border: 2px solid #687f91;
-    height: 396px;
-    width: 336px;
-    float: left;
-    margin-right: 10px;
-
-
-
+#wfirstn, #wfamn, #wgender, #wcity, #wcountry, #wemail, #pw1,#pw2{
+    margin-top: 5px;
 }
-div.container_welcome{
-      float: left;
+
+div.container2.input{
+    margin-bottom: 7px;
 }
+
 /*Error container*/
-#errorHome{
+#errorHome, #errorBrowse, #errorAccount, #errorWelcome{
     font-family: Calibri, Arial, "sans-serif";
     border: 2px solid #687f91;
-    color: white;
     background-color: #ff6442;
-    width: 230px;
-    height: auto;
-    float:left;
-}
-
-#errorAccount{
-    font-family: Calibri, Arial, "sans-serif";
-    border: 2px solid #687f91;
     color: white;
-    background-color: #ff6442;
-    width: 230px;
-    height: auto;
-    float:left;
-}
-
-#errorMessage{
     font-size: medium;
     text-align: center;
+    width: 230px;
+    height: auto;
+    float:left;
 }
 
-
-div.container_all{
-    height: 400px;
-    width: 800px;
-    margin-top: 100px;
-    margin-left:auto;
-    margin-right: auto;
-}
-
-
-/*tab*/
+/*Profile_View*/
+/*Tabular data presentation*/
 ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
     background-color: #687f91;
     overflow: hidden;
-
 }
 
 li {
@@ -153,13 +149,11 @@ li a:hover(.active) {
     background-color: #0cc7d3;
 }
 
-
+/*Tabular data presentation buttons*/
 #homebtn, #accoutbtn, #browsebtn{
     background-color: transparent;
     font-size: medium;
 }
-
-
 
 /*homeTab*/
 div.container_all_home{
@@ -183,7 +177,6 @@ div.information{
     float:left;
 }
 
-
 div.posted_messages{
     font-family: Calibri, Arial, "sans-serif";
     border: 2px solid #687f91;
@@ -198,8 +191,13 @@ div.posted_messages{
 }
 
 #my_messages{
-    height:145px;
+    font-family: Calibri, Arial, "sans-serif";
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    background-color: white;
     width: 230px;
+    height: auto;
+    float:left;
 }
 
 #new_selfmessage{
@@ -210,7 +208,7 @@ div.posted_messages{
 /*accountTab*/
 div.container_all_acc{
     height: 400px;
-    width: 600px;
+    width: 530px;
     margin-top: 100px;
     margin-left:auto;
     margin-right: auto;
@@ -226,8 +224,6 @@ div.container_all_acc{
     float: right;
 }
 
-
-
 div.account{
     font-family: Calibri, Arial, "sans-serif";
     border: 2px solid #687f91;
@@ -238,6 +234,9 @@ div.account{
     padding-left:3px;
     padding-right: 6px;
     margin-bottom: 10px;
+    margin-right: 10px;
+    float: left;
+
 }
 
 #OldPW, #NewPW, #RNewPW{
@@ -254,20 +253,18 @@ div.account{
     cursor: pointer;
     width: 125px;
     float: left;
-    margin-left: 25%;
+    margin-left: 28.5%;
 }
 
 
 /*browserTab*/
-
 div.contaier_all_browse{
     height: 400px;
-    width: 900px;
+    width: 1100px;
     margin-top: 100px;
     margin-left:auto;
     margin-right: auto;
 }
-
 
 div.search{
     font-family: Calibri, Arial, "sans-serif";
@@ -300,9 +297,11 @@ div.wall{
     width: 230px;
     margin-bottom: 10px;
 }
+
 #new_message{
     width: 230px;
 }
+
 #search_email{
     width:230px;
 }
@@ -318,9 +317,6 @@ div.wall{
     margin-bottom: 3px;
 }
 
-
-
-
 div.information_other{
     font-family: Calibri, Arial, "sans-serif";
     border: 2px solid #687f91;
@@ -333,14 +329,4 @@ div.information_other{
     margin-right: 10px;
     float: left;
 
-}
-
-#my_messages{
-     font-family: Calibri, Arial, "sans-serif";
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-    background-color: white;
-    width: 230px;
-    height: auto;
-    float:left;
 }

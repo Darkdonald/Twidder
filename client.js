@@ -2,7 +2,13 @@
  * Created by Jonas Brückner & Maximilian Gerst on 19.01.17.
  */
 
-//choose the used view through token
+//show the current view
+window.onload = function(){
+    viewScreen();
+    //document.getElementById("errorDiv").style.display = "none";
+};
+
+//choose the used view with existence of token
 viewScreen = function () {
 
     //check: token
@@ -12,12 +18,12 @@ viewScreen = function () {
     }
     else {
         //show Welcome View
-        displayView();
+        welcomeView();
     }
 };
 
 //display the Welcome View
-displayView = function() {
+welcomeView = function() {
 
     //Welcome Screen, No token
     //Get the content to display
@@ -28,6 +34,7 @@ displayView = function() {
 
     //Put it there
     target.innerHTML = elemWelcome.innerHTML;
+    document.getElementById("errorWelcome").style.display = "none";
 };
 
 //display the Profile View
@@ -49,12 +56,6 @@ displayViewProfile = function () {
 };
 
 
-//show the current view
-window.onload = function(){
-    viewScreen();
-    //document.getElementById("errorDiv").style.display = "none";
-};
-
 //Sign in function
 signIn = function () {
 
@@ -70,19 +71,19 @@ signIn = function () {
 
         //check: successful login
         if (input.success === true){
-
             //token created, Profile View will further show
+            console.log("token created, Profile View is going to be shown further on");
             viewScreen();
             return true;
 
         }else{
-
             //token not created, Welcome View will further show
+            console.log("token not created, Welcome View is going to be shown further on");
             return false;
         }
     }else{
-
         //input is not correct
+        error("Wrong passwort or wrong username!", "errorWelcome");
         return false;
     }
 };
@@ -101,7 +102,7 @@ signUp = function () {
     var psw2 = document.getElementsByName("psw_rep")["0"].value.toString();
 
     //check: correct email, password, first name, family name, city, country format and password is equal to repeat password
-    if(correct_Email(email) == true && correct_PW(pass) == true  &&  correct_FirstName(fn) == true && correct_FamilyName(famnam) == true && correct_City(ci) == true && correct_Country(co)== true && samePW(pass, psw2) == true){
+    if(correct_FirstName(fn) == true && correct_FamilyName(famnam) == true && correct_City(ci) == true && correct_Country(co)== true && correct_Email(email) == true && correct_PW(pass) == true  &&  samePW(pass, psw2) == true){
 
         //create a variable with all input data
         var input = {email: email, password: pass, firstname: fn, familyname: famnam, gender: g, city: ci, country: co};
@@ -115,61 +116,21 @@ signUp = function () {
             //login after creating a new user
             serverstub.signIn(email, pass);
             viewScreen();
-            return true;
+           return true;
         }else {
-
             //user already in system
+            error("User is already existing", "errorWelcome");
             return false;
         }
     }else{
-
         //wrong input
-        return false;
-    }
-};
-
-//function for checking the email format
-correct_Email = function(email){
-
-    //save correct email format
-    var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+);
-
-    //check: email with email format
-    if (email.match(mailformat)){
-        return true;
-    }else{
-        return false;
-    }
-};
-
-//function for checking the password format
-correct_PW = function (psw) {
-
-    //save length of password
-    var psw_length = psw.length;
-
-    //check: length of password not smaller than 8 sign
-    if (psw_length >= 8){
-        return true;
-    }else{
-        return false;
-    }
-};
-
-//function for checking the concordance of two passwords
-samePW = function(pw1, pw2){
-
-    //check: first password hasn't any differnces to the second password
-    if (pw1.localeCompare(pw2) == 0){
-        return true;
-    }else {
+        console.log("Wrong Input");
         return false;
     }
 };
 
 //function for checking the first name format
 correct_FirstName = function (fn) {
-
     //save all letters in a variable as format
     var letters = /^[a-zA-Z\u00fc\u00c4\u00e4\u00d6\u00f6\u00dc\u00df]+$/;
 
@@ -177,6 +138,7 @@ correct_FirstName = function (fn) {
     if (letters.test(fn) == true){
         return true;
     }else{
+        error("First name is not correct", "errorWelcome");
         return false;
     }
 };
@@ -191,20 +153,7 @@ correct_FamilyName = function (famn) {
     if (letters.test(famn)){
         return true;
     }else{
-        return false;
-    }
-};
-
-//function for checking the country format
-correct_Country = function (count) {
-
-    //save all letters in a variable as format
-    var letters = /^[a-zA-Z\u00fc\u00c4\u00e4\u00d6\u00f6\u00dc\u00df]+$/;
-
-    //check: country with format variable
-    if (letters.test(count)){
-        return true;
-    }else{
+        error("Familiy name is not correct", "errorWelcome");
         return false;
     }
 };
@@ -219,6 +168,67 @@ correct_City = function (city) {
     if (letters.test(city)){
         return true;
     }else{
+        error("City is not correct", "errorWelcome");
+        return false;
+    }
+};
+
+//function for checking the country format
+correct_Country = function (count) {
+
+    //save all letters in a variable as format
+    var letters = /^[a-zA-Z\u00fc\u00c4\u00e4\u00d6\u00f6\u00dc\u00df]+$/;
+
+    //check: country with format variable
+    if (letters.test(count)){
+        return true;
+    }else{
+        error("Country is not correct", "errorWelcome");
+        return false;
+    }
+};
+
+//function for checking the email format
+correct_Email = function(email){
+
+    //save correct email format
+    var mailformat = /(@)(.+)$/;
+
+    //check: email with email format
+    if (email.match(mailformat)){
+        return true;
+    }else{
+        console.log("Wrong email format");
+        error("Wrong email format", "errorWelcome");
+        return false;
+    }
+};
+
+//function for checking the password format
+correct_PW = function (psw) {
+
+    //save length of password
+    var psw_length = psw.length;
+
+    //check: length of password not smaller than 8 sign
+    if (psw_length >= 8){
+        return true;
+    }else{
+        console.log("Wrong Password");
+        error("The password has to consist of at least eight characters", "errorWelcome");
+        return false;
+    }
+};
+
+//function for checking the concordance of two passwords
+samePW = function(pw1, pw2){
+
+    //check: first password hasn't any differnces to the second password
+    if (pw1.localeCompare(pw2) == 0){
+        return true;
+    }else {
+        error("Passwords are not matching", "errorWelcome");
+        error("Passwords are not matching", "errorAccount");
         return false;
     }
 };
@@ -234,6 +244,7 @@ getToken = function () {
         var tok = localStorage.getItem("loggedinusers").slice(2, pos - 1).toString();
         return tok;
     }else{
+        console.log("Problems with getting a token from the server.")
         return false;
     }
 };
@@ -248,7 +259,7 @@ hide = function (ID) {
         document.getElementById("browse").style.display = "none";
         document.getElementById("account").style.display = "none";
 
-        //document.getElementById("errorHome").style.display = "none";
+        document.getElementById("errorHome").style.display = "none";
 
         document.getElementById("fname").innerHTML = "First Name: ".concat(serverstub.getUserDataByToken(getToken()).data.firstname);
         document.getElementById("lname").innerHTML = "Last Name: ".concat(serverstub.getUserDataByToken(getToken()).data.familyname);
@@ -264,7 +275,7 @@ hide = function (ID) {
         document.getElementById("browse").style.display = "block";
         document.getElementById("home").style.display = "none";
         document.getElementById("account").style.display = "none";
-        //document.getElementById("errorBrowse").style.display = "none";
+        document.getElementById("errorBrowse").style.display = "none";
 
         document.getElementById("firstname").innerHTML = "First Name:";
         document.getElementById("lastname").innerHTML = "Last Name:";
@@ -278,7 +289,7 @@ hide = function (ID) {
         document.getElementById("account").style.display = "block";
         document.getElementById("home").style.display = "none";
         document.getElementById("browse").style.display = "none";
-        //document.getElementById("errorAccount").style.display = "none";
+        document.getElementById("errorAccount").style.display = "none";
     }
 };
 
@@ -288,25 +299,28 @@ logout = function (){
     //use function of the server
     serverstub.signOut(getToken());
     viewScreen();
+    return true;
 };
 
 //function for posting messages
-postmessage = function (contentName, toEmail){
-    var contentInBlack = document.getElementsByName(contentName)["0"].value.fontcolor("black");
-     serverstub.postMessage(getToken(),contentInBlack,toEmail);
-     if(document.getElementsByName(contentName)["0"].value == ""){
-         error("Empty Message!","errorMessage","errorHome");
+postmessage = function (contentName, toEmail, errorId){
+     if(document.getElementsByName(contentName)["0"].value !== ""){ //check if message is empty
+         var contentInBlack = document.getElementsByName(contentName)["0"].value.fontcolor("black"); //To make message seen, because of [Object object] error
+         serverstub.postMessage(getToken(),contentInBlack,toEmail); //post message
+         return true;
      }
-     return true;
+     else{
+         error("Empty Message!", errorId); //show error message if posted message is empty
+         return false;
+     }
 };
 
 //function for getting a message and post it on the wall
 get_message = function (id_wall,email) {
-
     //check if user exists
     if (serverstub.getUserDataByEmail(getToken(), document.getElementsByName("smail")["0"].value).success === false && id_wall !== 'my_messages'){
-
         document.getElementById(id_wall).innerHTML = "Not in System!".fontcolor("red");
+        error("User is not existing", "errorBrowse");
 
     }else{
         var wall="";
@@ -355,7 +369,7 @@ changePW = function () {
 
     //check: new password is the same like the repeated password and the password format is correct
     if(samePW(newPW.toString(), oldPW.toString())){
-         error("New password is matching old password!","errorMessage","errorAccount");
+         error("New password is matching old password!","errorAccount");
      }
     if(samePW(newPW.toString(), rNewPW.toString()) && correct_PW(newPW)){
 
@@ -366,17 +380,50 @@ changePW = function () {
         return false;
     }
 };
-errorHide = function (div) {
-    document.getElementById(div).style.display = "none";
+errorHideHome = function (){
+    console.log("Delete error message");
+    document.getElementById("errorHome").style.display = "none";
     return true;
 };
 
-error = function (message,place,div) {
-        document.getElementById(div).style.display = "block";
-        message=message.bold();
-        document.getElementsByName(place).innerHTML = message;
-        setTimeout(errorHide,3000);
-        return true;
+errorHideAccount = function (){
+    console.log("Delete error message");
+    document.getElementById("errorAccount").style.display = "none";
+    return true;
+};
+
+errorHideBrowse = function (){
+    console.log("Delete error message");
+    document.getElementById("errorBrowse").style.display = "none";
+    return true;
+};
+
+errorHideWelcome = function (){
+    console.log("Delete error message");
+    document.getElementById("errorWelcome").style.display = "none";
+    return true;
+};
+
+error = function (message, errorId) {
+    console.log("Show error message");
+    document.getElementById(errorId).style.display = "block";
+    message = message.bold();
+
+    var errorMes = document.getElementsByName("errorMessage");
+    var i;
+    for (i = 0; i < errorMes.length; i++) {
+        errorMes[i].innerHTML = message;
+    }
+
+    if (errorId == "errorHome") {
+        setTimeout(errorHideHome, 3000);
+    } else if (errorId == "errorAccount") {
+        setTimeout(errorHideAccount, 3000);
+    } else if (errorId == "errorBrowse") {
+        setTimeout(errorHideBrowse, 3000);
+    } else if (errorId == "errorWelcome") {
+        setTimeout(errorHideWelcome, 3000);
+    }
 };
 
 clean = function(name){

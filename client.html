@@ -27,40 +27,50 @@
                      </div>
 
                      <div class="container2">
+
+
                         <header><b>Sign up here<br/><br></b></header>
 
-                        <label>First Name</label>
-                        <input type="text" placeholder="" name="unameReg" required>
+                        <label>First Name: <input type="text" placeholder="" name="unameReg" id="wfirstn" required></label>
 
-                        <label><br>Family Name</label>
-                        <input type="text" placeholder="" name="FN" required>
 
-                        <label><br>Gender</label>
-                        <select name="Gen" size="1" required>
-                            <option>Male</option>
-                            <option>Female</option>
-                            <option>Other</option>
-                        </select>
+                        <label><br>Family Name: <input type="text" placeholder="" name="FN" id="wfamn" required></label>
 
-                        <label><br>City</label>
-                        <input type="text" placeholder="" name="City" required>
 
-                        <label><br>Country</label>
-                        <input type="text" placeholder="" name="Cou" required>
+                        <label><br>Gender: <select name="Gen" size="1" id="wgender" required>
+                                                <option>Male</option>
+                                                <option>Female</option>
+                                                <option>Other</option>
+                                            </select>
+                        </label>
 
-                        <label><br>Email</label>
-                        <input type="email" placeholder="" name="EM" required>
 
-                        <label><br>Password</label>
-                        <input type="password" placeholder="Min. 8 symbols" name="psw_new" id="pw1" minlength=8 required>
 
-                        <label><br>Repeat PSW</label>
-                        <input type="password" placeholder="Min. 8 symbols" name="psw_rep" id="pw2" minlength=8 required>
+                        <label><br>City: <input type="text" placeholder="" name="City" id="wcity" required></label>
+
+
+                        <label><br>Country: <input type="text" placeholder="" name="Cou" id="wcountry" required></label>
+
+
+                        <label><br>Email: <input type="email" placeholder="" name="EM" id="wemail"required></label>
+
+
+                        <label><br>Password:  <input type="password" placeholder="Min. 8 symbols" name="psw_new" id="pw1" minlength=8 required></label>
+
+
+                        <label><br>Repeat PSW: <input type="password" placeholder="Min. 8 symbols" name="psw_rep" id="pw2" minlength=8 required></label>
+
 
                         <button href="javascript:void(0)" onclick="signUp()" type="submit" id="SIGNUP">SignUp</button>
 
                       </div>
                  </div>
+
+                 <div class="error" id="errorWelcome">
+                    <header><b>Error:<br><br></b></header>
+                    <p name="errorMessage"></p> <br>
+                </div>
+
             </div>
         </script>
 
@@ -94,14 +104,14 @@
                 <label id="my_messages">  <br> <br> <br> </label> <br>
                 <button type="button" onclick="get_message('my_messages',serverstub.getUserDataByToken(getToken()).data.email.toString())">Reload</button>
                 <input id="new_selfmessage" type="text" placeholder="Type Message.." name="nmymes" required>
-                <button onclick ="postmessage('nmymes',serverstub.getUserDataByToken(getToken()).data.email.toString()); get_message('my_messages',serverstub.getUserDataByToken(getToken()).data.email.toString());clean('nmymes');"type="button">Send</button>
+                <button onclick ="postmessage('nmymes',serverstub.getUserDataByToken(getToken()).data.email.toString(),'errorHome'); get_message('my_messages',serverstub.getUserDataByToken(getToken()).data.email.toString());clean('nmymes');"type="button">Send</button>
             </div>
-<!--
+
              <div class="error" id="errorHome">
                 <header><b>Error:<br><br></b></header>
-                <p id="errorMessage"></p> <br>
+                <p name="errorMessage"></p> <br>
             </div>
--->
+
             </div>
 
             <!--accountTab-->
@@ -110,29 +120,25 @@
                 <div class="account">
                     <header><b>Change Passwort<br><br></b></header>
 
-                    <label id="lOldPW">Old Password</label>
-                    <input id="OldPW" type="password" placeholder="Enter Old Passwort" name="OPW" minlength=8 required>
+                    <label id="lOldPW">Old Password<input type="password" placeholder="Enter Old Passwort" name="OPW" id="OldPW" minlength=8 required>
+</label>
 
-                    <label id="lNewPW"><br>New Password</b></label>
-                    <input id="NewPW" type="password" placeholder="Enter New Passwort" name="NPW" minlength=8 required>
-
-                    <label id="lRNewPW"><br>Repeat Password</b></label>
-                    <input id="RNewPW" type="password" placeholder="Repeat New Passwort" name="RNPW" minlength=8 required>
+                    <label id="lNewPW"><br>New Password</b><input type="password" placeholder="Enter New Passwort" name="NPW" id="NewPW" minlength=8 required>
+</label>
+                    <label id="lRNewPW"><br>Repeat Password</b><input type="password" placeholder="Repeat New Passwort" name="RNPW" id="RNewPW" minlength=8 required></label>
 
                     <button onclick="changePW();clean('OPW');clean('NPW');clean('RNPW');" id="submitbtn" type="submit">Send</button>
                 </div>
 
-
-
-                <div class="logoutbtn">
-                    <button type="button" id="logout" onclick="logout()">Log Out</button>
-                </div>
-<!--
                 <div class="error" id="errorAccount">
                     <header><b>Error:<br><br></b></header>
                     <p name="errorMessage"></p> <br>
                 </div>
--->
+
+                <div class="logoutbtn">
+                    <button type="button" id="logout" onclick="logout()">Log Out</button>
+                </div>
+
             </div>
 
             <!--browserTab-->
@@ -148,20 +154,23 @@
                  <header><b>Wall<br><br></b></header>
                 <label id="browse_message"> <br> <br> <br> </label> <br>
                 <input id="new_message" type="text" placeholder="New Message" name="nmes" required>
-                <button type="button" onclick="postmessage('nmes',document.getElementsByName('smail')['0'].value); get_message('browse_message',document.getElementsByName('smail')['0'].value); clean('nmes');">Send</button>
+                <button type="button" onclick="postmessage('nmes',document.getElementsByName('smail')['0'].value,'errorBrowse'); get_message('browse_message',document.getElementsByName('smail')['0'].value); clean('nmes');">Send</button>
             </div>
 
-         <div class="information_other">
-                <header><b>Personal Informations <br><br></b></header>
-                <label id="firstname"></label><br>
-                <label id="lastname"></label><br>
-                <label id="genderredneg"></label><br>
-                <label id="cityytic"></label><br>
-                <label id="count"></label><br>
-                <label id="inemail"></label>
+             <div class="information_other">
+                    <header><b>Personal Informations <br><br></b></header>
+                    <label id="firstname"></label><br>
+                    <label id="lastname"></label><br>
+                    <label id="genderredneg"></label><br>
+                    <label id="cityytic"></label><br>
+                    <label id="count"></label><br>
+                    <label id="inemail"></label>
+             </div>
+
+            <div class="error" id="errorBrowse">
+                <header><b>Error:<br><br></b></header>
+                <p name="errorMessage"></p> <br>
             </div>
-
-
 
 
             </div>
