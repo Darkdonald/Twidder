@@ -50,8 +50,10 @@ displayViewProfile = function () {
     //Put it there
     target.innerHTML = elemProfile.innerHTML;
 
-    //show the Home page when refreshing
+    //show the Home page when page is refreshed
     hide(home_ref);
+
+    //Show Message Wall when page is refreshed
     get_message('my_messages',serverstub.getUserDataByToken(getToken()).data.email.toString())
 };
 
@@ -65,7 +67,6 @@ signIn = function () {
 
     //check: correct email format and correct password format
     if (correct_Email(email) && correct_PW(pass)){
-
         //Use the signIn() function of the server and save the return in a variable
         var input = serverstub.signIn(email, pass);
 
@@ -78,6 +79,7 @@ signIn = function () {
 
         }else{
             //token not created, Welcome View will further show
+            error("Wrong passwort or wrong username!", "errorWelcome");
             console.log("token not created, Welcome View is going to be shown further on");
             return false;
         }
@@ -387,26 +389,24 @@ get_message = function (id_wall,email) {
 getUserInformation = function () {
 
     //check: email in system
-    if(serverstub.getUserDataByEmail(getToken(), document.getElementsByName("smail")["0"].value).success === true){
+    if(serverstub.getUserDataByEmail(getToken(), document.getElementsByName("smail")["0"].value).success === true) {
 
         //information of other user
         document.getElementById("firstname").innerHTML = "First Name: ".concat(serverstub.getUserDataByEmail(getToken(), document.getElementsByName("smail")["0"].value).data.firstname);
-        document.getElementById("lastname").innerHTML = "Last Name: ".concat(serverstub.getUserDataByEmail(getToken(),document.getElementsByName("smail")["0"].value).data.familyname);
-        document.getElementById("genderredneg").innerHTML = "Gender: ".concat(serverstub.getUserDataByEmail(getToken(),document.getElementsByName("smail")["0"].value).data.gender);
-        document.getElementById("cityytic").innerHTML = "City: ".concat(serverstub.getUserDataByEmail(getToken(),document.getElementsByName("smail")["0"].value).data.city);
-        document.getElementById("count").innerHTML = "Country: ".concat(serverstub.getUserDataByEmail(getToken(),document.getElementsByName("smail")["0"].value).data.country);
-        document.getElementById("inemail").innerHTML = "Email: ".concat(serverstub.getUserDataByEmail(getToken(),document.getElementsByName("smail")["0"].value).data.email);
-    }else{
-
-        //information of other user isn't in System
-        document.getElementById("firstname").innerHTML = "First Name: Not in System!".fontcolor("red");
-        document.getElementById("lastname").innerHTML = "Last Name: Not in System!".fontcolor("red");
-        document.getElementById("genderredneg").innerHTML = "Gender: Not in System!".fontcolor("red");
-        document.getElementById("cityytic").innerHTML = "City: Not in System!".fontcolor("red");
-        document.getElementById("count").innerHTML = "Country: Not in System!".fontcolor("red");
-        document.getElementById("inemail").innerHTML = "Email: Not in System!".fontcolor("red");
+        document.getElementById("lastname").innerHTML = "Last Name: ".concat(serverstub.getUserDataByEmail(getToken(), document.getElementsByName("smail")["0"].value).data.familyname);
+        document.getElementById("genderredneg").innerHTML = "Gender: ".concat(serverstub.getUserDataByEmail(getToken(), document.getElementsByName("smail")["0"].value).data.gender);
+        document.getElementById("cityytic").innerHTML = "City: ".concat(serverstub.getUserDataByEmail(getToken(), document.getElementsByName("smail")["0"].value).data.city);
+        document.getElementById("count").innerHTML = "Country: ".concat(serverstub.getUserDataByEmail(getToken(), document.getElementsByName("smail")["0"].value).data.country);
+        document.getElementById("inemail").innerHTML = "Email: ".concat(serverstub.getUserDataByEmail(getToken(), document.getElementsByName("smail")["0"].value).data.email);
+    }else {
+        document.getElementById("firstname").innerHTML = "First Name: ";
+        document.getElementById("lastname").innerHTML = "Last Name: ";
+        document.getElementById("genderredneg").innerHTML = "Gender: ";
+        document.getElementById("cityytic").innerHTML = "City: ";
+        document.getElementById("count").innerHTML = "Country: ";
+        document.getElementById("inemail").innerHTML = "Email: "
     }
-};
+    };
 
 
 errorHideHome = function (){
