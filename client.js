@@ -305,44 +305,39 @@ getToken = function () {
 hide = function (ID) {
 
     //check: which tab is active
-    if (ID==home_ref)
-    {
+    if (ID==home_ref) {
         document.getElementById("home").style.display = "block";
         document.getElementById("browse").style.display = "none";
         document.getElementById("account").style.display = "none";
 
         document.getElementById("errorHome").style.display = "none";
 
-        document.getElementById("fname").innerHTML = "First Name: ".concat(serverstub.getUserDataByToken(getToken()).data.firstname);
-        document.getElementById("lname").innerHTML = "Last Name: ".concat(serverstub.getUserDataByToken(getToken()).data.familyname);
-        document.getElementById("gender").innerHTML = "Gender: ".concat(serverstub.getUserDataByToken(getToken()).data.gender);
-        document.getElementById("city").innerHTML = "City: ".concat(serverstub.getUserDataByToken(getToken()).data.city);
-        document.getElementById("country").innerHTML = "Country: ".concat(serverstub.getUserDataByToken(getToken()).data.country);
-        document.getElementById("infoemail").innerHTML = "Email: ".concat(serverstub.getUserDataByToken(getToken()).data.email);
+        document.getElementById("fname").innerHTML =serverstub.getUserDataByToken(getToken()).data.firstname;
+        document.getElementById("lname").innerHTML =serverstub.getUserDataByToken(getToken()).data.familyname;
+        document.getElementById("gender").innerHTML =serverstub.getUserDataByToken(getToken()).data.gender;
+        document.getElementById("city").innerHTML =serverstub.getUserDataByToken(getToken()).data.city;
+        document.getElementById("country").innerHTML =serverstub.getUserDataByToken(getToken()).data.country;
+        document.getElementById("infoemail").innerHTML =serverstub.getUserDataByToken(getToken()).data.email;
         document.getElementById("my_messages").innerHTML = serverstub.getUserMessagesByToken(getToken());
 
-    }
-    else if (ID ==browse_ref)
-    {
+    } else if (ID==account_ref) {
+        document.getElementById("account").style.display = "block";
+        document.getElementById("home").style.display = "none";
+        document.getElementById("browse").style.display = "none";
+        document.getElementById("errorAccount").style.display = "none";
+
+    } else if (ID ==browse_ref) {
         document.getElementById("browse").style.display = "block";
         document.getElementById("home").style.display = "none";
         document.getElementById("account").style.display = "none";
         document.getElementById("errorBrowse").style.display = "none";
 
-        document.getElementById("firstname").innerHTML = "First Name:";
-        document.getElementById("lastname").innerHTML = "Last Name:";
-        document.getElementById("genderredneg").innerHTML = "Gender:";
-        document.getElementById("cityytic").innerHTML = "City:";
-        document.getElementById("count").innerHTML = "Country:";
-        document.getElementById("inemail").innerHTML = "Email:";
+        if (document.getElementsByName("smail")["0"].value == "") {
+            document.getElementById("informationOther").style.display = "none";
+            document.getElementById("wallOther").style.display = "none";
+        }
     }
-    else if (ID==account_ref)
-    {
-        document.getElementById("account").style.display = "block";
-        document.getElementById("home").style.display = "none";
-        document.getElementById("browse").style.display = "none";
-        document.getElementById("errorAccount").style.display = "none";
-    }
+
 };
 
 //function for logging out
@@ -358,6 +353,7 @@ logout = function (){
 postmessage = function (contentName, toEmail, errorId){
      if(document.getElementsByName(contentName)["0"].value !== ""){ //check if message is empty
          var contentInBlack = document.getElementsByName(contentName)["0"].value.fontcolor("black"); //To make message seen, because of [Object object] error
+         console.log(contentInBlack);
          serverstub.postMessage(getToken(),contentInBlack,toEmail); //post message
          return true;
      }
@@ -373,13 +369,15 @@ get_message = function (id_wall,email) {
     if (serverstub.getUserDataByEmail(getToken(), document.getElementsByName("smail")["0"].value).success === false && id_wall !== 'my_messages'){
         document.getElementById(id_wall).innerHTML = "Not in System!".fontcolor("red");
         error("User is not existing", "errorBrowse");
-
+        document.getElementById("informationOther").style.display = "none";
+        document.getElementById("wallOther").style.display = "none";
     }else{
         var wall="";
         for(var i=0; i<serverstub.getUserMessagesByEmail(getToken(),email).data.length; i++)
             {
                 var newPost = serverstub.getUserMessagesByEmail(getToken(),email).data[i].writer.toString() + ": " .concat(serverstub.getUserMessagesByEmail(getToken(),email).data[i].content.toString()) + "\<br>";
                 wall = wall + newPost;
+
             }
         document.getElementById(id_wall).innerHTML = wall;
     }
@@ -391,20 +389,19 @@ getUserInformation = function () {
     //check: email in system
     if(serverstub.getUserDataByEmail(getToken(), document.getElementsByName("smail")["0"].value).success === true) {
 
+        document.getElementById("informationOther").style.display = "block";
+        document.getElementById("wallOther").style.display = "block";
+
         //information of other user
-        document.getElementById("firstname").innerHTML = "First Name: ".concat(serverstub.getUserDataByEmail(getToken(), document.getElementsByName("smail")["0"].value).data.firstname);
-        document.getElementById("lastname").innerHTML = "Last Name: ".concat(serverstub.getUserDataByEmail(getToken(), document.getElementsByName("smail")["0"].value).data.familyname);
-        document.getElementById("genderredneg").innerHTML = "Gender: ".concat(serverstub.getUserDataByEmail(getToken(), document.getElementsByName("smail")["0"].value).data.gender);
-        document.getElementById("cityytic").innerHTML = "City: ".concat(serverstub.getUserDataByEmail(getToken(), document.getElementsByName("smail")["0"].value).data.city);
-        document.getElementById("count").innerHTML = "Country: ".concat(serverstub.getUserDataByEmail(getToken(), document.getElementsByName("smail")["0"].value).data.country);
-        document.getElementById("inemail").innerHTML = "Email: ".concat(serverstub.getUserDataByEmail(getToken(), document.getElementsByName("smail")["0"].value).data.email);
+        document.getElementById("firstname").innerHTML =serverstub.getUserDataByEmail(getToken(), document.getElementsByName("smail")["0"].value).data.firstname;
+        document.getElementById("lastname").innerHTML =serverstub.getUserDataByEmail(getToken(), document.getElementsByName("smail")["0"].value).data.familyname;
+        document.getElementById("genderredneg").innerHTML =serverstub.getUserDataByEmail(getToken(), document.getElementsByName("smail")["0"].value).data.gender;
+        document.getElementById("cityytic").innerHTML =serverstub.getUserDataByEmail(getToken(), document.getElementsByName("smail")["0"].value).data.city;
+        document.getElementById("count").innerHTML = serverstub.getUserDataByEmail(getToken(), document.getElementsByName("smail")["0"].value).data.country;
+        document.getElementById("inemail").innerHTML = serverstub.getUserDataByEmail(getToken(), document.getElementsByName("smail")["0"].value).data.email;
     }else {
-        document.getElementById("firstname").innerHTML = "First Name: ";
-        document.getElementById("lastname").innerHTML = "Last Name: ";
-        document.getElementById("genderredneg").innerHTML = "Gender: ";
-        document.getElementById("cityytic").innerHTML = "City: ";
-        document.getElementById("count").innerHTML = "Country: ";
-        document.getElementById("inemail").innerHTML = "Email: "
+        document.getElementById("informationOther").style.display = "none";
+        document.getElementById("wallOther").style.display = "none";
     }
     };
 
@@ -456,7 +453,13 @@ error = function (message, errorId) {
 };
 
 clean = function(name){
-    document.getElementsByName(name)["0"].value= "";
+    console.log(document.getElementById(name).value);
+    document.getElementById(name).value= "";
+    console.log(name);
+    console.log(document.getElementById(name).value);
+
+   //var field = document.getElementById(name);
+   //field.value = field.defaultValue;
     return true;
 };
 

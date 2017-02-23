@@ -91,20 +91,22 @@
 
             <div class="information">
                 <header><b>Personal Informations <br><br></b></header>
-                <label id="fname"></label><br>
-                <label id="lname"></label><br>
-                <label id="gender"></label><br>
-                <label id="city"></label><br>
-                <label id="country"></label><br>
-                <label id="infoemail"></label>
+                <p>First name: <span id="fname"></span></p>
+                    <p>Last name: <span id="lname"></span></p>
+                    <p>Gender: <span id="gender"></span></p>
+                    <p>City: <span id="city"></span></p>
+                    <p>Country: <span id="country"></span></p>
+                    <p>Email: <span id="infoemail"></span></p>
             </div>
 
             <div class="posted_messages">
                 <header><b>Wall<br><br></b></header>
                 <label id="my_messages">  <br> <br> <br> </label> <br>
                 <button type="button" onclick="get_message('my_messages',serverstub.getUserDataByToken(getToken()).data.email.toString())">Reload</button>
-                <input id="new_selfmessage" type="text" placeholder="Type Message.." name="nmymes" required>
-                <button onclick ="postmessage('nmymes',serverstub.getUserDataByToken(getToken()).data.email.toString(),'errorHome'); get_message('my_messages',serverstub.getUserDataByToken(getToken()).data.email.toString());clean('nmymes');"type="button">Send</button>
+                <input id="new_selfmessage" type="text" placeholder="Type Message.." name="nmymes">
+               <button onclick ="postmessage('nmymes',serverstub.getUserDataByToken(getToken()).data.email.toString(),'errorHome'); get_message('my_messages',serverstub.getUserDataByToken(getToken()).data.email.toString());clean('new_selfmessage');"type="button">Send</button>
+
+
             </div>
 
              <div class="error" id="errorHome">
@@ -120,14 +122,14 @@
                 <div class="account">
                     <header><b>Change Passwort<br><br></b></header>
 
-                    <label id="lOldPW">Old Password<input type="password" placeholder="Enter Old Passwort" name="OPW" id="OldPW" minlength=8 required>
+                    <label id="lOldPW">Old Password<input type="password" placeholder="Enter Old Passwort" name="OPW" id="OldPW" minlength=8>
 </label>
 
-                    <label id="lNewPW"><br>New Password</b><input type="password" placeholder="Enter New Passwort" name="NPW" id="NewPW" minlength=8 required>
+                    <label id="lNewPW"><br>New Password</b><input type="password" placeholder="Enter New Passwort" name="NPW" id="NewPW" minlength=8>
 </label>
-                    <label id="lRNewPW"><br>Repeat Password</b><input type="password" placeholder="Repeat New Passwort" name="RNPW" id="RNewPW" minlength=8 required></label>
+                    <label id="lRNewPW"><br>Repeat Password</b><input type="password" placeholder="Repeat New Passwort" name="RNPW" id="RNewPW" minlength=8 ></label>
 
-                    <button onclick="changePW();clean('OPW');clean('NPW');clean('RNPW');" id="submitbtn" type="submit">Send</button>
+                    <button onclick="changePW();clean('OldPW');clean('NewPW');clean('RNewPW');" id="submitbtn" type="button">Send</button>
                 </div>
 
                 <div class="error" id="errorAccount">
@@ -150,21 +152,21 @@
                 <button type="button" name="buttonSearch" onclick="getUserInformation(); get_message('browse_message',document.getElementsByName('smail')['0'].value);">Search</button>
             </div>
 
-            <div class="wall">
+            <div class="wall" id="wallOther">
                  <header><b>Wall<br><br></b></header>
                 <label id="browse_message"> <br> <br> <br> </label> <br>
-                <input id="new_message" type="text" placeholder="New Message" name="nmes" required>
-                <button type="button" onclick="postmessage('nmes',document.getElementsByName('smail')['0'].value,'errorBrowse'); get_message('browse_message',document.getElementsByName('smail')['0'].value); clean('nmes');">Send</button>
+                <input id="new_message" type="text" placeholder="New Message" name="nmes">
+                <button  onclick="postmessage('nmes',document.getElementsByName('smail')['0'].value,'errorBrowse'); get_message('browse_message',document.getElementsByName('smail')['0'].value); clean('new_message');" type="button">Send</button>
             </div>
 
-             <div class="information_other">
+             <div class="information_other" id="informationOther">
                     <header><b>Personal Informations <br><br></b></header>
-                    <label id="firstname"></label><br>
-                    <label id="lastname"></label><br>
-                    <label id="genderredneg"></label><br>
-                    <label id="cityytic"></label><br>
-                    <label id="count"></label><br>
-                    <label id="inemail"></label>
+                    <p>First name: <span id="firstname"></span></p>
+                    <p>Last name: <span id="lastname"></span></p>
+                    <p>Gender: <span id="genderredneg"></span></p>
+                    <p>City: <span id="cityytic"></span></p>
+                    <p>Country: <span id="count"></span></p>
+                    <p>Email: <span id="inemail"></span></p>
              </div>
 
             <div class="error" id="errorBrowse">
