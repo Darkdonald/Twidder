@@ -1,92 +1,94 @@
-import os
-from flask import Flask, request, session, g, redirect, url_for, abort, \
-    render_template, flash
+from flask import Flask, render_template
 import math
 import random
-# import sqlite3 as sql
 import database_helper as dh
+import json
 
 app = Flask(__name__)
 
-users=None
-loggedInUsers=None
 
-@app.route("/")
-def main():
+@app.route('/')
+def index():
     return render_template('client.html')
 
+
+@app.route('/SignIn')
 def sign_in(email, password):
-    if (dh.find_user(email) == True):
+    if (dh.find_user(email) == True & dh.get_user_email(email).psw == password):
         letters = "abcdefghiklmnopqrstuvwwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
         token = ""
         i = 0
         while i < 36:
             token += letters[math.floor(random.randint(0, len(letters)))]
-        return {"success": True, "message": "Successfully signed in.", "data": token}
+        return json.dump({"success": True, "message": "Successfully signed in.", "data": token}, fp=list)
     else:
-        return {"success": False, "message": "Wrong username or password."}
+        return json.dump({"success": False, "message": "Wrong username or password."}, fp=list)
 
 
+@app.route('/SignUp')
 def sign_up(email, password, firstname, familyname, gender, city, country):
 
     if (dh.find_user(email) == None):
         if ((type(email)=='str') & (type(password)=='str') & (type(firstname)=='str') & (type(familyname)=='str') & (type(gender)=='str') & (type(city)=='str') & (type(country)=='str')):
             dh.insert_user(email, password, firstname, familyname, gender, city, country)
-            return {"success": True, "message": "Successfully created a new user."}
+            return json.dump({"success": True, "message": "Successfully created a new user."}, fp=list)
         else:
-            return {"success": False, "message": "Form data missing or incorrect type."}
+            return json.dump({"success": False, "message": "Form data missing or incorrect type."}, fp=list)
     else:
-        return {"success": False, "message": "User already exists."}
+        return json.dump({"success": False, "message": "User already exists."}, fp=list)
 
 
+@app.route('/SignOut')
 def sign_out(token):
     if(dh.get_user(token) != None):
         dh.delete_token(dh.get_user(token).emailU)
-        return {"success": True, "message": "Successfully signed out."}
+        return json.dump({"success": True, "message": "Successfully signed out."}, fp=list)
     else:
-        return {"success": False, "message": "You are not signed in."}
+        return json.dump({"success": False, "message": "You are not signed in."}, fp=list)
 
-
+@app.route('/ChangePSW')
 def change_password(token, old_password, new_password):
     if (dh.get_user(token) != None):
         if(dh.get_user(token).psw == old_password):
             dh.get_user(token).psw = new_password
-            return {"success": True, "message": "Password changed."}
+            return json.dump({"success": True, "message": "Password changed."}, fp=list)
         else:
-            return {"success": False, "message": "Wrong password."}
+            return json.dump({"success": False, "message": "Wrong password."}, fp=list)
     else:
-        return {"success": False, "message": "You are not logged in."}
+        return json.dump({"success": False, "message": "You are not logged in."}, fp=list)
 
 
+@app.route('/GetUDatabyT')
 def get_user_data_by_token(token):
-    return dh.get_user(token)
+    return json.dump(dh.get_user(token), fp=dict)
 
-
+@app.route('/GetUDatabyE')
 def get_user_data_by_email(token, email):
     if(dh.get_user(token) != None):
         if(dh.get_user_email(email) != None):
             match = dh.get_user_email(email)
             match.psw = None
-            return {"success": True, "message": "User data retrieved.", "data": match};
+            return json.dump({"success": True, "message": "User data retrieved.", "data": match}, fp=list)
         else:
-            return {"success": False, "message": "No such user."};
+            return json.dump({"success": False, "message": "No such user."},fp=list)
     else:
-        return {"success": False, "message": "You are not signed in."};
+        return json.dump({"success": False, "message": "You are not signed in."}, fp=list)
 
-
+@app.route('/GetUMesbyT')
 def get_user_messages_by_token(token):
     if (dh.find_user(dh.get_user(token).emailU)):
-        return dh.get_messages_by_token(token)
+        return json.dump(dh.get_messages_by_token(token), fp=dict)
     else:
-        return None
+        return json.dump(None, fp=None)
 
+@app.route('/GetUMesbyE')
 def get_user_messages_by_email(token, email):
     if(dh.get_messages_by_token(token) != None):
-        return dh.get_messages(email)
+        return json.dump(dh.get_messages(email), fp=dict)
     else:
-        return None
+        return json.dump(None, fp=None)
 
-
+@app.route('/POSTMes')
 def post_message(token, message, email):
     fromEmail = dh.get_user(token).emailU;
     if(fromEmail is not None):
@@ -95,8 +97,12 @@ def post_message(token, message, email):
         if(dh.get_user_email(email) is not None):
             recipient = dh.get_user_email(email)
             dh.insert_message(fromEmail, recipient, message)
-            return {"success": True, "message": "Message posted"};
+            return json.dump({"success": True, "message": "Message posted"}, fp=list)
         else:
-            return {"success": False, "message": "No such user."};
+            return json.dump({"success": False, "message": "No such user."}, fp=list)
     else:
-        return {"success": False, "message": "You are not signed in."};
+        return json.dump({"success": False, "message": "You are not signed in."}, fp=list)
+
+
+if __name__ == '__main__':
+    app.run(debug=True, host='localhost', port=5000)
