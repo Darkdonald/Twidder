@@ -14,28 +14,22 @@ def index():
 
 @app.route('/SignIn/<email>/<password>')
 def sign_in(email, password):
-    if (dh.find_user(email) == True & dh.get_user_email(email).psw == password):
+    if (dh.find_user(email) is True):
+        print "hello"
         letters = "abcdefghiklmnopqrstuvwwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
         token = ""
         i = 0
         while i < 36:
-            token += letters[math.floor(random.randint(0, len(letters)))]
-        return json.dump({"success": True, "message": "Successfully signed in.", "data": token}, fp=list)
+            token += letters[int(math.floor(random.randint(0, len(letters))))-1]
+        return json.dumps({"success": True, "message": "Successfully signed in.", "data": token})
     else:
-        return json.dump({"success": False, "message": "Wrong username or password."}, fp=list)
+        return json.dumps({"success": False, "message": "Wrong username or password."})
 
 
 @app.route('/SignUp/<email>/<password>/<firstname>/<familyname>/<gender>/<city>/<country>', methods=['GET', 'POST'])
 def sign_up(email, password, firstname, familyname, gender, city, country):
 
-    if (dh.find_user(email) != True):
-        print email
-        print password
-        print firstname
-        print familyname
-        print gender
-        print city
-        print country
+    if (dh.find_user(email) is not True):
         if ((type(email)== unicode) & (type(password)== unicode) & (type(firstname)== unicode) & (type(familyname)== unicode) & (type(gender)==unicode) & (type(city)== unicode) & (type(country)==unicode)):
             dh.insert_user(email, password, firstname, familyname, gender, city, country)
             return json.dumps({"success": True, "message": "Successfully created a new user."})
