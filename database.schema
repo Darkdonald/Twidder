@@ -1,19 +1,15 @@
-sqlite3 /home/jonasbrueckner/PycharmProjects/LAB2/database.db < database.schema
-
 CREATE TABLE Client(
-	FirstName		CHARACTER(50) NOT NULL;
-	FamilyName		CHARACTER(50) NOT NULL;
-	Gender			CHARACTER(50) NOT NULL;
-	City			CHARACTER(50) NOT NULL;
-	Country			CHARACTER(50) NOT NULL;
-	Email			CHARACTER(50) PRIMARY KEY;
-	PSW				CHARACTER(50) NOT NULL;
-	Token			CHARACTER(50);
-)
+	FirstName		nvarchar NOT NULL,
+	FamilyName		nvarchar NOT NULL,
+	Gender			nvarchar NOT NULL,
+	City			nvarchar NOT NULL,
+	Country			nvarchar NOT NULL,
+	Email			nvarchar PRIMARY KEY,
+	PSW				nvarchar NOT NULL,
+	Token			nvarchar);
 
 CREATE TABLE Messages(
-	Ind				INTEGER NOT NULL AUTO_INCREMENT;
-	Writer			VARCHAR(50) CHECK(SELECT * FROM Messages as m WHERE EXISTS (SELECT * FROM Client as c WHERE m.Writer = c.Email)); 
-	Receiver		VARCHAR(50) CHECK(SELECT * FROM Messages as m WHERE EXISTS (SELECT * FROM Client as c WHERE m.Receiver = c.Email));
-	Message			VARCHAR(500) NOT NULL;
-)
+	Ind				ROWID,
+	Writer			nvarchar,
+	Receiver		nvarchar,
+	Message			nvarchar);

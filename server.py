@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import math
 import random
 import database_helper as dh
@@ -12,7 +12,7 @@ def index():
     return render_template('client.html')
 
 
-@app.route('/SignIn')
+@app.route('/SignIn/<email>/<password>')
 def sign_in(email, password):
     if (dh.find_user(email) == True & dh.get_user_email(email).psw == password):
         letters = "abcdefghiklmnopqrstuvwwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
@@ -25,17 +25,24 @@ def sign_in(email, password):
         return json.dump({"success": False, "message": "Wrong username or password."}, fp=list)
 
 
-@app.route('/SignUp')
+@app.route('/SignUp/<email>/<password>/<firstname>/<familyname>/<gender>/<city>/<country>', methods=['GET', 'POST'])
 def sign_up(email, password, firstname, familyname, gender, city, country):
 
-    if (dh.find_user(email) == None):
-        if ((type(email)=='str') & (type(password)=='str') & (type(firstname)=='str') & (type(familyname)=='str') & (type(gender)=='str') & (type(city)=='str') & (type(country)=='str')):
+    if (dh.find_user(email) != True):
+        print email
+        print password
+        print firstname
+        print familyname
+        print gender
+        print city
+        print country
+        if ((type(email)== unicode) & (type(password)== unicode) & (type(firstname)== unicode) & (type(familyname)== unicode) & (type(gender)==unicode) & (type(city)== unicode) & (type(country)==unicode)):
             dh.insert_user(email, password, firstname, familyname, gender, city, country)
-            return json.dump({"success": True, "message": "Successfully created a new user."}, fp=list)
+            return json.dumps({"success": True, "message": "Successfully created a new user."})
         else:
-            return json.dump({"success": False, "message": "Form data missing or incorrect type."}, fp=list)
+            return json.dumps({"success": False, "message": "Form data missing or incorrect type."})
     else:
-        return json.dump({"success": False, "message": "User already exists."}, fp=list)
+        return json.dumps({"success": False, "message": "User already exists."})
 
 
 @app.route('/SignOut')
