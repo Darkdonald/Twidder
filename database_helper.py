@@ -2,14 +2,10 @@ import sqlite3 as sql
 from flask import Flask
 
 
-DATABASE = '/home/jonasbrueckner/PycharmProjects/LAB2/database.db'
+DATABASE = 'database.db'
 
-app = Flask(__name__)
-
-
-@app.route("/help")
 def get_user_email(email):
-    user = None
+    user = {"FirstName": None, "FamilyName": None, "Gender": None, "City": None, "Country": None, "Email":None}
     con = sql.connect(DATABASE, timeout=5.0)
     cur = con.cursor()
     cur.execute("SELECT * FROM Client WHERE Email='%s'" % email)
@@ -20,55 +16,94 @@ def get_user_email(email):
         city = row[3]
         country = row[4]
         emailU = row[5]
-        psw = row[6]
-        print psw
-        print emailU
-        user = {"firstname" : firstName, "familyname": familyName, "gender": gender, "city": city, "country": country, "email": emailU, "password": psw}
+        user = {"FirstName":firstName, "FamilyName": familyName, "Gender": gender, "City": city, "Country": country, "Email":emailU}
     con.commit()
     cur.close()
     con.close()
     return user
+
+def get_psw(email):
+    psw = None
+    con = sql.connect(DATABASE, timeout=5.0)
+    cur = con.cursor()
+    cur.execute("SELECT * FROM Client WHERE Email='%s'" % email)
+    for row in cur.fetchall():
+        psw = row[6]
+    con.commit()
+    cur.close()
+    con.close()
+    return psw
+
+def get_token(email):
+    psw = None
+    con = sql.connect(DATABASE, timeout=5.0)
+    cur = con.cursor()
+    cur.execute("SELECT * FROM Client WHERE Email='%s'" % email)
+    for row in cur.fetchall():
+        psw = row[6]
+    con.commit()
+    cur.close()
+    con.close()
+    return psw
 
 
 def get_user(token):
-    user = None
+    user = {"FirstName": None, "FamilyName": None, "Gender": None, "City": None, "Country": None, "Email":None}
     con = sql.connect(DATABASE, timeout=5.0)
     cur = con.cursor()
-    cur.execute("SELECT * FROM Client WHERE Token=?", (token))
+    cur.execute("SELECT * FROM Client WHERE Token='%s'" % token)
     for row in cur.fetchall():
-        firstName = str(row[0])
-        familyName = str(row[1])
-        gender = str(row[2])
-        city = str(row[3])
-        country = str(row[4])
-        emailU = str(row[5])
-        psw = str(row[6])
-        token = str(row[7])
-        user = [firstName, familyName, gender, city, country, emailU, psw, token]
+        firstName = row[0]
+        familyName = row[1]
+        gender = row[2]
+        city = row[3]
+        country = row[4]
+        emailU = row[5]
+        user = {"FirstName":firstName, "FamilyName": familyName, "Gender": gender, "City": city, "Country": country, "Email":emailU}
     con.commit()
     cur.close()
     con.close()
     return user
 
-
-def get_messages(email):
+def get_psw_t(token):
+    psw = None
     con = sql.connect(DATABASE, timeout=5.0)
     cur = con.cursor()
-    cur.execute("SELECT * FROM Messages WHERE Writer='%s'" % email)
+    cur.execute("SELECT * FROM Client WHERE Token='%s'" % token)
+    for row in cur.fetchall():
+        psw = row[6]
     con.commit()
     cur.close()
     con.close()
+    return psw
+
+
+def get_messages(email):
+    rec = email
+    mes = []
+    con = sql.connect(DATABASE, timeout=5.0)
+    cur = con.cursor()
+    ex = cur.execute("SELECT * FROM Messages WHERE Receiver='%s'" % rec)
+    for row in ex.fetchall():
+        mes.append([{"Message":row[3], "Writer": row[1]}])
+    con.commit()
+    cur.close()
+    con.close()
+    return mes
 
 
 def get_messages_by_token(token):
-    writer = get_user(token).emailU
+    rec = get_user(token)["Email"]
+    mes = []
     con = sql.connect(DATABASE, timeout=5.0)
     cur = con.cursor()
-    cur.execute("SELECT * FROM Messages WHERE Writer='%s'" % writer)
+    ex = cur.execute("SELECT * FROM Messages WHERE Receiver='%s'" % rec)
+    for row in ex.fetchall():
+        mes.append([{"Message":row[3], "Writer": row[1]}])
     con.commit()
     cur.close()
     con.close()
-
+    return mes
 
 def find_user(email):
     con = sql.connect(DATABASE)
@@ -87,13 +122,14 @@ def find_token(email):
     con = sql.connect(DATABASE, timeout=5.0)
     cur = con.cursor()
     ex = cur.execute("SELECT Token FROM Client WHERE Email='%s'" % email)
-    i = len(ex.fetchall())
-    if (i > 0):
+    for row in ex.fetchall():
+        token =row[0]
+    if (token is not None):
         return True
     con.commit()
     cur.close()
     con.close()
-    return True
+    return False
 
 
 def delete_user(email):
@@ -109,7 +145,8 @@ def delete_user(email):
 def insert_message(emailW, emailR, msg):
     con = sql.connect(DATABASE)
     cur = con.cursor()
-    cur.execute("INSERT INTO Messages (Writer, Receiver, Message)""VALUES (?,?,?)",(emailW, emailR, msg))
+    cur.execute("INSERT INTO Messages (Writer, Receiver, Message) VALUES (?,?,?)",(emailW, emailR, msg))
+
     con.commit()
     cur.close()
     con.close()
@@ -135,10 +172,18 @@ def insert_user(email, password, firstname, familyname, gender, city, country):
     return True
 
 
-def insert_token(token):
+def insert_token(email, token):
     con = sql.connect(DATABASE, timeout=5.0)
     cur = con.cursor()
-    cur.execute("INSERT INTO Client (Token)""VALUES (?)",(token))
+    cur.execute("UPDATE Client SET Token=? WHERE Email=?",(token, email))
+    con.commit()
+    con.close()
+    return True
+
+def insert_PW(token, psw):
+    con = sql.connect(DATABASE, timeout=5.0)
+    cur = con.cursor()
+    cur.execute("UPDATE Client SET PSW=? WHERE Token=?",(psw, token))
     con.commit()
     con.close()
     return True

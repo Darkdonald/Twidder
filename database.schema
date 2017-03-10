@@ -9,7 +9,7 @@ CREATE TABLE Client(
 	Token			nvarchar);
 
 CREATE TABLE Messages(
-	Ind				ROWID,
+	ROWID			INTEGER PRIMARY KEY,
 	Writer			nvarchar,
 	Receiver		nvarchar,
 	Message			nvarchar);
