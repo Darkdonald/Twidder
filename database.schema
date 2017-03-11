@@ -1,0 +1,15 @@
+CREATE TABLE Client(
+	FirstName		nvarchar NOT NULL,
+	FamilyName		nvarchar NOT NULL,
+	Gender			nvarchar NOT NULL,
+	City			nvarchar NOT NULL,
+	Country			nvarchar NOT NULL,
+	Email			nvarchar PRIMARY KEY,
+	PSW				nvarchar NOT NULL,
+	Token			nvarchar);
+
+CREATE TABLE Messages(
+	ROWID			INTEGER PRIMARY KEY,
+	Writer			nvarchar,
+	Receiver		nvarchar,
+	Message			nvarchar);
