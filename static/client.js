@@ -2,93 +2,6 @@
  * Created by Jonas Brückner & Maximilian Gerst on 19.01.17.
  */
 
-var websocket=null;
-
-
-
-
-
-
-//Sign in function
-signIn = function () {
-
-    //Get the data of the user for login
-    var email = document.getElementsByName("emailIn")["0"].value.toString();
-    var pass = document.getElementsByName("psw")["0"].value.toString();
-
-    //check: correct email format and correct password format
-    if (correct_Email(email) && correct_PW(pass)){
-        //Use the signIn() function of the server and save the return in a variable
-
-        var signInStr = "email="+email + "&password="+pass; //create String for SignIn
-        var input = sendToServer("/SignIn",signInStr); //Send SignIn Post-method to server and store return data
-
-        //check: successful login
-        if (input.success === true){ //check if one can get the information with .sucess
-            //token created, Profile View will further show
-            localStorage.setItem('token',input.data);
-
-            if("WebSocket" in window){
-                websocket = new WebSocket('ws://' + document.domain + ":5000/api/");
-
-                console.log("client.js/SignIn: Websocket open" + websocket);
-
-
-                // When the connection is open, send some data to the server
-                websocket.onopen = function () {
-                        websocket.send(localStorage.getItem("token")); // Send the token to the server
-                        console.log("client.js, websocket.onopen: send token to server.py");
-                };
-
-                console.log("token created, Profile View is going to be shown further on");
-
-                viewScreen();
-                return true;
-
-            }else {
-                console.log("token not created, Websocket is not supported");
-                error("WebSoket is not supported by your browser!", "errorWelcome");
-                return false;
-            }
-
-        }else{
-            //token not created, Welcome View will further show
-            error("Wrong passwort or wrong username!", "errorWelcome");
-            console.log("token not created, Welcome View is going to be shown further on");
-            return false;
-        }
-    }else{
-        //input is not correct
-        error("Wrong passwort or wrong username!", "errorWelcome");
-        return false;
-    }
-};
-
-//function for logging out
-logout = function (){
-
-    var logoutStr = "token="+getToken();
-
-    //use function of the server
-    sendToServer("/SignOut",logoutStr);
-    localStorage.removeItem("token");
-    websocket.close();
-    viewScreen();
-
-    //Close Weboscket connenction
-    //websocket = null;
-    console.log("client.js/WbSocket closed");
-
-    return true;
-};
-
-
-
-
-
-
-
-
 
 //show the current view
 window.onload = function(){
@@ -146,10 +59,28 @@ displayViewProfile = function () {
 };
 
 
+
+//function if websocket receives a message
+function received_message(message){
+	if(message.content){ //can be either "getout" or "connected" from server.py/api
+		switch(message.content){
+			case "get_out":
+			    console.log("receive_message: get_out");
+				logout();
+				break;
+			default:
+				console.log(message.content);
+				break;
+		}
+	}
+}
+
+
 //Sign up function
 signUp = function () {
-
+    console.log("client.js,signup aufgerufen");
     //Get the data of the user for Sign up
+
     var email = document.getElementsByName("EM")["0"].value.toString();
     var pass = document.getElementsByName("psw_new")["0"].value.toString();
     var fn = document.getElementsByName("unameReg")["0"].value.toString();
@@ -167,20 +98,51 @@ signUp = function () {
         //Use the signUp() function of the server and save the return in a variable
         var inputAll = sendToServer("/SignUp",user);
         //check: successful registration
-        if (inputAll["success"] == true){
+        console.log(inputAll);
+
+        if (inputAll["success"] == true) {
+
 
             //login after creating a new user
-            var signInStr = "email="+email + "&password="+pass;
+            var signInStr = "email=" + email + "&password=" + pass;
 
-            var input = sendToServer("/SignIn",signInStr);
+            var input = sendToServer("/SignIn", signInStr);
+            //use localstorage for storing token, wil not be cleared after every refresh
+            localStorage.setItem('token', input.data);
 
-            localStorage.setItem('token',input.data);
-            viewScreen();
+            if (input.success === true) { //check if tocken is successfully created with /SignIn
+                console.log("/SignIn Rueckgabe bei SignUp");
+                console.log(input);
 
-           return true;
-        }else {
-            //user already in system
-            error("User is already existing", "errorWelcome");
+                //setting of websocket
+                if ("WebSocket" in window) {
+                    console.log("websocket start bei SignUp, client.js");
+                    ws = new WebSocket("ws://" + document.domain + ":5000/api");
+                    ws.onopen = function () {
+                        ws.send(input.data); //send token to server with websocket
+                        console.log("client.js,SignUp, websocket.onopen: send token to server.py");
+                    };
+                    ws.onmessage = function (msg) {
+                        var message = JSON.parse(msg.data);
+                        received_message(message);
+                    };
+                    ws.onclose = function (e) {
+                        console.log(e);
+                        console.log("connection closed,SignUp,client.js");
+                    };
+                }
+                viewScreen();
+                return true;
+
+            } else {
+                //user already in system
+                error("User is already existing", "errorWelcome");
+                return false;
+            }
+        }else{
+            //token not created, Welcome View will further show
+            error("Ups, something went wrong. Maybe user already exists.", "errorWelcome");
+            console.log("No SignUp, could not submit data correctly");
             return false;
         }
     }else{
@@ -189,6 +151,96 @@ signUp = function () {
         return false;
     }
 };
+
+
+//Sign in function
+signIn = function () {
+
+    //Get the data of the user for login
+    var email = document.getElementsByName("emailIn")["0"].value.toString();
+    var pass = document.getElementsByName("psw")["0"].value.toString();
+
+    //check: correct email format and correct password format
+    if (correct_Email(email) && correct_PW(pass)){
+        //Use the signIn() function of the server and save the return in a variable
+
+        var signInStr = "email="+email + "&password="+pass; //create String for SignIn
+        var input = sendToServer("/SignIn",signInStr); //Send SignIn Post-method to server and store return data
+        console.log(input.message);
+
+        //check: successful login
+        if (input.success === true){ //check if one can get the information with .sucess
+            //token created, Profile View will be shown further on
+            localStorage.setItem('token',input.data);
+
+            if("WebSocket" in window){
+                websocket = new WebSocket('ws://' + document.domain + ":5000/api");
+
+                console.log("client.js/SignIn: Websocket open");
+                console.log(websocket);
+
+                // When the connection is open, send some data to the server
+                websocket.onopen = function () {
+                        websocket.send(input.data); // Send the token to the server
+                        console.log("client.js, websocket.onopen: send token to server.py");
+                };
+                websocket.onmessage = function (msg) {
+			        var message = JSON.parse(msg.data); //Von server.py wird bei SignIn bzw. SignUp der token als data gesendet
+			        received_message(message);
+		        };
+                websocket.onclose = function(e){
+				    console.log("connection closed,SignIn,client.js");
+			    };
+
+                console.log("token created, Profile View is going to be shown further on");
+
+                viewScreen();
+                return true;
+
+            }else {
+                console.log("token not created, Websocket is not supported");
+                error("WebSoket is not supported by your browser!", "errorWelcome");
+                return false;
+            }
+
+        }else{
+            //token not created, Welcome View will further show
+            error("Wrong passwort or wrong username!", "errorWelcome");
+            console.log("token not created, Welcome View is going to be shown further on");
+            return false;
+        }
+    }else{
+        //input is not correct
+        error("Wrong passwort or wrong username!", "errorWelcome");
+        return false;
+    }
+};
+
+
+//function for logging out
+logout = function (){
+    console.log("client.js: Logout");
+    var logoutStr = "token="+getToken();
+
+    //use function of the server
+    sendToServer("/SignOut",logoutStr);
+    localStorage.removeItem("token");
+    viewScreen();
+
+    //Close Weboscket connenction
+    if(websocket){
+		websocket.send("logout");
+		websocket.close();
+		websocket = null;
+		console.log("connection closed, due to signout");
+	}
+
+    console.log("client.js,logout; WebSocket closed due to signout");
+    console.log("Logout correct");
+
+    return true;
+};
+
 
 //function for getting the current user token
 getToken = function () {
@@ -407,12 +459,6 @@ clean = function(name){
     return true;
 };
 
-
-
-
-
-
-
 //function for checking the first name format
 correct_FirstName = function (fn) {
     //save all letters in a variable as format
@@ -570,7 +616,6 @@ changePW = function () {
 };
 
 
-
 var obj;
 sendToServer =function (app,string) {
 
@@ -589,9 +634,6 @@ sendToServer =function (app,string) {
         }
     };
 
-    //xhttp.setRequestHeader("Content-length", string.length);
-    //xhttp.setRequestHeader("Connenction", "close");
-
     xhttp.send(string);
     return obj;
 
@@ -599,20 +641,6 @@ sendToServer =function (app,string) {
 
 
 
-// Log errors
-websocket.onerror = function (error) {
-    console.log('WebSocketError ' + error);
-};
-
-// Log messages from the server
-websocket.onmessage = function (e) {
-    console.log('Server: ' + e.data);
-
-    if(e.data=="closeWS"){ //Log out old User if same user logs in twice
-        console.log("User logged in twice: will be logged out");
-        logout();
-    }
-};
 
 
 

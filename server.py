@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 from geventwebsocket.handler import WebSocketHandler
 from gevent.pywsgi import WSGIServer
+from gevent import wsgi
 import math
 import random
 import database_helper as dh
@@ -12,32 +13,29 @@ app = Flask(__name__,static_folder='static', static_url_path='/static')
 def index():
     return render_template('client.html')
 
-global dict
-dict = {}
-global ws
+ws_list = {}
 
-@app.route('/api/')
+@app.route("/api")
 def api():
-
-    print("Websocket start auf server.py/api")
-
+    print("Websocket starts on server.py/api")
+    global ws_list #dicionary with websockets global definded
     if request.environ.get('wsgi.websocket'):
-
-
-        ws = request.environ['wsgi.websocket']
+        ws = request.environ['wsgi.websocket'] #name of websocket
 
         while True:
-            token = ws.receive()
-            email = dh.get_user(token)["Email"]
-            print ("server.py/api Token+Email: ")
-            print(token)
-            print (email)
+            message = ws.receive() #message could be the token (SignIn/Up) or "logout" (logout-function)
+            if message == "logout":
+                print "User wird ausgeloggt"
+                return "logout"
 
-            dict[email] = ws
+            email = dh.get_user(message)["Email"]
+            ws.send('{"content": "connected"}') #user will be logged in
+            if email in ws_list:
+                ws_list[email].send('{"content": "get_out"}') #send to Websocket: log out user on other device
+                print("user wird ausgeloggt")
+                print ws_list
 
-            print("value to email in dict: ")
-            print(dict[email])
-
+            ws_list[email] = ws #assign new websocket
     return ("api close")
 
 
@@ -48,21 +46,9 @@ def sign_in():
         password = request.form['password']
 
         if (dh.find_user(email) is True):
-            if(dh.get_psw_t(dh.get_token(email)) == password):
-                print("server.py/SignIn password is true")
-
-                if(dict[email] is not None):
-                    print("server.py_Websocket/SignIn: User zweimal eingeloggt. Eintrag in dict[email] vorhannden. Ausloggen... ")
-                    otherWS = dict[email]
-                    print ("server.py/SignIn: other Websocket Name: ")
-                    print (otherWS)
-
-                    otherWS.send("closeWS")
-
-            else:
-
+            if(dh.get_psw(email) == password):
                 if(dh.find_token(email) is False):
-                    letters = "abcdefghiklmnopqrstuvwwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+                    letters = "abcdefghiklmnopqrstuvwwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890" #create token
                     token = ""
                     i = 0
                     while i < 36:
@@ -71,13 +57,14 @@ def sign_in():
                     token.join(token)
                     print ("server.py/SignIn Token wird erstellt: " + token)
                     dh.insert_token(email, token)
-                    return jsonify({"success": True, "message": "Successfully signed in", "data": token})
 
+                    return jsonify({"success": True, "message": "Successfully signed in", "data": token})
                 else:
                     return jsonify({"success": False, "message": "Already signed in.", "data": "No Token"})
-
+            else:
+                return jsonify({"success": False, "message": "Wrong password.", "data": "No Token"})
         else:
-            return jsonify({"success": False, "message": "Wrong username or password.", "data": "No Token"})
+            return jsonify({"success": False, "message": "Wrong username.", "data": "No Token"})
 
 
 
@@ -96,30 +83,29 @@ def sign_up():
         if (dh.find_user(email) is not True):
             if ((type(email)== unicode) & (type(password)== unicode) & (type(firstname)== unicode) & (type(familyname)== unicode) & (type(gender)==unicode) & (type(city)== unicode) & (type(country)==unicode)):
                 dh.insert_user(email, password, firstname, familyname, gender, city, country)
-                dict.fromkeys(email) #creates email of user as a key in WebSocket Dictionary
-                return jsonify({"success": True, "message": "Successfully created a new user."})
 
+                return jsonify({"success": True, "message": "Successfully created a new user."})
             else:
                 return jsonify({"success": False, "message": "Form data missing or incorrect type."})
-
         else:
             return jsonify({"success": False, "message": "User already exists."})
 
 
 @app.route('/SignOut', methods=['POST'])
 def sign_out():
-
+        global ws_list
         token = request.form['token']
         tok ="".join(token)
 
         print("server.py/Signout token=")
         print(tok)
 
-
         if(dh.get_user(tok) is not None):
-            dh.delete_token(dh.get_user(tok)["Email"])
+            email = dh.get_user(tok)["Email"]
+            dh.delete_token(email)
 
-            print("server.py/signOut aufgerufen und return true")
+            if email in ws_list: #check if websocket is in dictionary
+                ws_list.pop(email) #if key "email" could be found in dictionary, delete websocket out of dictionary
             return jsonify({"success": True, "message": "Successfully signed out."})
         else:
             print("server.py/signOut aufgerufen und return false")

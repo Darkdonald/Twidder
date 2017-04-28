@@ -40,11 +40,14 @@ def get_token(email):
     con = sql.connect(DATABASE, timeout=5.0)
     cur = con.cursor()
     cur.execute("SELECT * FROM Client WHERE Email='%s'" % email)
+    #token = cur.fetchone()
     for row in cur.fetchall():
-        token = row[6]
+        token = row[7]
     con.commit()
     cur.close()
     con.close()
+    print("databasehelper/getToken(email)")
+    print (token)
     return token
 
 
@@ -126,8 +129,8 @@ def find_token(email):
     ex = cur.execute("SELECT Token FROM Client WHERE Email='%s'" % email)
     for row in ex.fetchall():
         token=row[0]
-    if (token is not None):
-        return True
+    #if (token is not None):
+     #   return True
     con.commit()
     cur.close()
     con.close()
