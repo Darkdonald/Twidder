@@ -2,6 +2,7 @@
  * Created by Jonas Brückner & Maximilian Gerst on 19.01.17.
  */
 
+
 //show the current view
 window.onload = function(){
     viewScreen();
@@ -15,6 +16,7 @@ viewScreen = function () {
     if (getToken()){
         //show Profile View
         displayViewProfile();
+        get_message('my_messages','false');
     }
     else {
         //show Welcome View
@@ -36,42 +38,6 @@ welcomeView = function() {
     target.innerHTML = elemWelcome.innerHTML;
     document.getElementById("errorWelcome").style.display = "none";
 };
-getUserData = function (token,email) {
-
-    var getUserDataTStr = token.toString();
-
-    if (email == "false") {
-        //Get user Data by Token, if no email is submitted
-        var input1 = JSON.parse(sendToServer("/GetUDatabyT",getUserDataTStr));
-        return input1; //input contains either the success = true or the success = false data
-
-    } else {
-        //Get user data by Email
-        var getUserDataEStr = "email="+email + "&token="+token;
-        var input2 = JSON.parse(sendToServer("/GetUDatabyE",getUserDataEStr.toString()));
-        return input2;
-    }
-};
-
-getUserMessages = function (token,email) {
-
-    if (email == "false") {
-        //Get user Message by Token, if no email is submitted
-        var tokenStr = "token="+getToken();
-
-        var messageT = sendToServer("/GetUMesbyT",tokenStr.toString());
-
-        return messageT; //input contains either the success = true or the success = false data
-
-
-    } else {
-        //Get user message by Email
-        var uMesByE = "token="+getToken() + "&email="+email;
-        var messageE = JSON.parse(sendToServer("/GetUMesbyE",uMesByE.toString()));
-
-        return messageE;
-    }
-};
 
 //display the Profile View
 displayViewProfile = function () {
@@ -88,50 +54,33 @@ displayViewProfile = function () {
 
     //show the Home page when page is refreshed
     hide(home_ref);
-
     //Show Message Wall when page is refreshed
-    get_message('my_messages',getUserData(getToken()).data.email.toString(),"false")
+
 };
 
 
-//Sign in function
-signIn = function () {
 
-    //Get the data of the user for login
-    var email = document.getElementsByName("emailIn")["0"].value.toString();
-    var pass = document.getElementsByName("psw")["0"].value.toString();
+//function if websocket receives a message
+function received_message(message){
+	if(message.content){ //can be either "getout" or "connected" from server.py/api
+		switch(message.content){
+			case "get_out":
+			    console.log("receive_message: get_out");
+				logout();
+				break;
+			default:
+				console.log(message.content);
+				break;
+		}
+	}
+}
 
-    //check: correct email format and correct password format
-    if (correct_Email(email) && correct_PW(pass)){
-        //Use the signIn() function of the server and save the return in a variable
-
-       var signInStr = "email="+email + "&password="+pass; //create String for SignIn
-            var input = JSON.parse(sendToServer("/SignIn",signInStr)); //Send SignIn Post-method to server and store return data
-
-        //check: successful login
-        if (input.success === true){ //check if one can get the information with .sucess
-            //token created, Profile View will further show
-            console.log("token created, Profile View is going to be shown further on");
-            viewScreen();
-            return true;
-
-        }else{
-            //token not created, Welcome View will further show
-            error("Wrong passwort or wrong username!", "errorWelcome");
-            console.log("token not created, Welcome View is going to be shown further on");
-            return false;
-        }
-    }else{
-        //input is not correct
-        error("Wrong passwort or wrong username!", "errorWelcome");
-        return false;
-    }
-};
 
 //Sign up function
 signUp = function () {
-
+    console.log("client.js,signup aufgerufen");
     //Get the data of the user for Sign up
+
     var email = document.getElementsByName("EM")["0"].value.toString();
     var pass = document.getElementsByName("psw_new")["0"].value.toString();
     var fn = document.getElementsByName("unameReg")["0"].value.toString();
@@ -146,22 +95,54 @@ signUp = function () {
 
     //check: correct email, password, first name, family name, city, country format and password is equal to repeat password
     if(correct_FirstName(fn) == true && correct_FamilyName(famnam) == true && correct_City(ci) == true && correct_Country(co)== true && correct_Email(email) == true && correct_PW(pass) == true  &&  samePW(pass, psw2) == true){
-
         //Use the signUp() function of the server and save the return in a variable
-        var inputAll = JSON.parse(sendToServer("/SignUp",user));
-        console.log(inputAll);
+        var inputAll = sendToServer("/SignUp",user);
         //check: successful registration
-        if (inputAll.success == true){
+        console.log(inputAll);
+
+        if (inputAll["success"] == true) {
+
 
             //login after creating a new user
-            var signInStr = "email="+email + "&password="+pass;
-            sendToServer("/SignIn",signInStr);
-            viewScreen();
+            var signInStr = "email=" + email + "&password=" + pass;
 
-           return true;
-        }else {
-            //user already in system
-            error("User is already existing", "errorWelcome");
+            var input = sendToServer("/SignIn", signInStr);
+            //use localstorage for storing token, wil not be cleared after every refresh
+            localStorage.setItem('token', input.data);
+
+            if (input.success === true) { //check if tocken is successfully created with /SignIn
+                console.log("/SignIn Rueckgabe bei SignUp");
+                console.log(input);
+
+                //setting of websocket
+                if ("WebSocket" in window) {
+                    console.log("websocket start bei SignUp, client.js");
+                    ws = new WebSocket("ws://" + document.domain + ":5000/api");
+                    ws.onopen = function () {
+                        ws.send(input.data); //send token to server with websocket
+                        console.log("client.js,SignUp, websocket.onopen: send token to server.py");
+                    };
+                    ws.onmessage = function (msg) {
+                        var message = JSON.parse(msg.data);
+                        received_message(message);
+                    };
+                    ws.onclose = function (e) {
+                        console.log(e);
+                        console.log("connection closed,SignUp,client.js");
+                    };
+                }
+                viewScreen();
+                return true;
+
+            } else {
+                //user already in system
+                error("User is already existing", "errorWelcome");
+                return false;
+            }
+        }else{
+            //token not created, Welcome View will further show
+            error("Ups, something went wrong. Maybe user already exists.", "errorWelcome");
+            console.log("No SignUp, could not submit data correctly");
             return false;
         }
     }else{
@@ -169,6 +150,313 @@ signUp = function () {
         console.log("Wrong Input in SignUp");
         return false;
     }
+};
+
+
+//Sign in function
+signIn = function () {
+
+    //Get the data of the user for login
+    var email = document.getElementsByName("emailIn")["0"].value.toString();
+    var pass = document.getElementsByName("psw")["0"].value.toString();
+
+    //check: correct email format and correct password format
+    if (correct_Email(email) && correct_PW(pass)){
+        //Use the signIn() function of the server and save the return in a variable
+
+        var signInStr = "email="+email + "&password="+pass; //create String for SignIn
+        var input = sendToServer("/SignIn",signInStr); //Send SignIn Post-method to server and store return data
+        console.log(input.message);
+
+        //check: successful login
+        if (input.success === true){ //check if one can get the information with .sucess
+            //token created, Profile View will be shown further on
+            localStorage.setItem('token',input.data);
+
+            if("WebSocket" in window){
+                websocket = new WebSocket('ws://' + document.domain + ":5000/api");
+
+                console.log("client.js/SignIn: Websocket open");
+                console.log(websocket);
+
+                // When the connection is open, send some data to the server
+                websocket.onopen = function () {
+                        websocket.send(input.data); // Send the token to the server
+                        console.log("client.js, websocket.onopen: send token to server.py");
+                };
+                websocket.onmessage = function (msg) {
+			        var message = JSON.parse(msg.data); //Von server.py wird bei SignIn bzw. SignUp der token als data gesendet
+			        received_message(message);
+		        };
+                websocket.onclose = function(e){
+				    console.log("connection closed,SignIn,client.js");
+			    };
+
+                console.log("token created, Profile View is going to be shown further on");
+
+                viewScreen();
+                return true;
+
+            }else {
+                console.log("token not created, Websocket is not supported");
+                error("WebSoket is not supported by your browser!", "errorWelcome");
+                return false;
+            }
+
+        }else{
+            //token not created, Welcome View will further show
+            error("Wrong passwort or wrong username!", "errorWelcome");
+            console.log("token not created, Welcome View is going to be shown further on");
+            return false;
+        }
+    }else{
+        //input is not correct
+        error("Wrong passwort or wrong username!", "errorWelcome");
+        return false;
+    }
+};
+
+
+//function for logging out
+logout = function (){
+    console.log("client.js: Logout");
+    var logoutStr = "token="+getToken();
+
+    //use function of the server
+    sendToServer("/SignOut",logoutStr);
+    localStorage.removeItem("token");
+    viewScreen();
+
+    //Close Weboscket connenction
+    if(websocket){
+		websocket.send("logout");
+		websocket.close();
+		websocket = null;
+		console.log("connection closed, due to signout");
+	}
+
+    console.log("client.js,logout; WebSocket closed due to signout");
+    console.log("Logout correct");
+
+    return true;
+};
+
+
+//function for getting the current user token
+getToken = function () {
+
+    //check: currently user is logging in
+    if (localStorage.getItem("token") !== null) {
+
+
+        //get the token of localStorage
+        var tok = localStorage.getItem("token")
+        return tok;
+
+    }else{
+        console.log("Problems with getting a token from the server.");
+        return false;
+    }
+};
+
+//get User informations, either by token [email="false", myWall] or by email
+getUserData = function (token,email) {
+
+    var getUserDataTStr ="token="+ token.toString();
+
+    if (email == "false") {
+        //Get user Data by Token, if no email is submitted
+        var input1 = sendToServer("/GetUDatabyT",getUserDataTStr);
+        return input1; //"success": True, "message": "User data found.", "data": get_user(token)[list] ([firstName, familyName, gender, city, country, emailU, psw, token])
+
+    } else {
+        //Get user data by Email
+        var getUserDataEStr = "email="+email + "&token="+token;
+        var input2 = sendToServer("/GetUDatabyE",getUserDataEStr.toString());
+        return input2; //"success": True, "message": "User data found.", "data": dh.get_user_email(recemail)[list] ([firstName, familyName, gender, city, country, emailU, psw, token])
+    }
+};
+
+
+//get Messages of User, either by token [email="false", myWall] or by email
+getUserMessages = function (token,email) {
+
+    if (email == 'false') { //If email is false, use GetMessageByToken --> MyMessages
+        //Get user Message by Token, if no email is submitted
+        var tokenStr = "token="+getToken();
+
+        var mArrayT = sendToServer("/GetUMesbyT",tokenStr.toString());
+        return mArrayT; //contains List with 2D Array for messages; "data": dh.get_messages_by_token(token), "success": True, "message": "Messages received."
+
+    } else {
+        //Get user message by Email
+        var uMesByE = "token="+getToken() + "&email="+email;
+        var mArrayE = sendToServer("/GetUMesbyE",uMesByE.toString());
+        return mArrayE; //contains List with 2D Array for messages; "data": dh.get_messages_by_token(token), "success": True, "message": "Messages received."
+    }
+};
+
+//function for posting messages
+postmessage = function (contentName, toEmail, errorId){
+     if(document.getElementsByName(contentName)["0"].value !== ""){ //check if message is empty
+
+         var contentInBlack = document.getElementsByName(contentName)["0"].value//.fontcolor("black"); //To make message seen, because of [Object object] error
+         var postMesStr = "token="+getToken() + "&message="+contentInBlack + "&toemail="+toEmail;
+         sendToServer("/POSTMes",postMesStr); //post message
+
+         return true;
+     }
+
+     else{
+         error("Empty Message!", errorId); //show error message if posted message is empty
+         return false;
+     }
+};
+
+//function for getting a message and post it on the wall
+get_message = function (id_wall,email) {
+
+    //check if user exists
+    if (getUserData(getToken(), document.getElementsByName("smail")["0"].value)["success"] === false && id_wall !== 'my_messages'){
+
+        document.getElementById(id_wall).innerHTML = "Not in System!".fontcolor("red");
+        error("User is not existing", "errorBrowse");
+
+        document.getElementById("informationOther").style.display = "none";
+        document.getElementById("wallOther").style.display = "none";
+
+    }else{ //user exists
+        var wall="";
+
+        for(var i=0; i<getUserMessages(getToken(),email)['data'].length; i++)
+            {
+                var newPost = getUserMessages(getToken(),email)['data'][i.toString()]['Writer'] + ": " .concat(getUserMessages(getToken(),email)['data'][i.toString()]['Message']) + "\<br>";
+                wall = wall + newPost;
+
+            }
+        document.getElementById(id_wall).innerHTML = wall;
+    }
+};
+
+//function for getting user information
+getUserInformation = function () {
+
+    //check: email in system
+    if(getUserData(getToken(), document.getElementsByName("smail")["0"].value)["success"] === true) {
+
+        document.getElementById("informationOther").style.display = "block";
+        document.getElementById("wallOther").style.display = "block";
+
+        //information of other user
+        document.getElementById("firstname").innerHTML = getUserData(getToken(), document.getElementsByName("smail")["0"].value)["data"]["FirstName"];
+        document.getElementById("lastname").innerHTML = getUserData(getToken(), document.getElementsByName("smail")["0"].value)["data"]["FamilyName"];
+        document.getElementById("genderredneg").innerHTML = getUserData(getToken(), document.getElementsByName("smail")["0"].value)["data"]["Gender"];
+        document.getElementById("cityytic").innerHTML = getUserData(getToken(), document.getElementsByName("smail")["0"].value)["data"]["City"];
+        document.getElementById("count").innerHTML = getUserData(getToken(), document.getElementsByName("smail")["0"].value)["data"]["Country"];
+        document.getElementById("inemail").innerHTML = getUserData(getToken(), document.getElementsByName("smail")["0"].value)["data"]["Email"];
+    }else {
+        document.getElementById("informationOther").style.display = "none";
+        document.getElementById("wallOther").style.display = "none";
+    }
+    };
+
+//function for displaying the three profile tabs
+hide = function (ID) {
+
+    //check: which tab is active
+    if (ID==home_ref) {
+        document.getElementById("home").style.display = "block";
+        document.getElementById("browse").style.display = "none";
+        document.getElementById("account").style.display = "none";
+
+        document.getElementById("errorHome").style.display = "none";
+
+
+
+        //get_message('my_messages',getUserData(getToken(),'false')['data']['Email']);
+
+        document.getElementById("fname").innerHTML = getUserData(getToken(),"false")["data"]["FirstName"];
+        document.getElementById("lname").innerHTML = getUserData(getToken(),"false")["data"]["FamilyName"];
+        document.getElementById("gender").innerHTML = getUserData(getToken(),"false")["data"]["Gender"];
+        document.getElementById("city").innerHTML = getUserData(getToken(),"false")["data"]["City"];
+        document.getElementById("country").innerHTML = getUserData(getToken(),"false")["data"]["Country"];
+        document.getElementById("infoemail").innerHTML = getUserData(getToken(),"false")["data"]["Email"];
+        document.getElementById("my_messages").innerHTML = getUserMessages(getToken(),"false");
+
+    } else if (ID==account_ref) {
+        document.getElementById("account").style.display = "block";
+        document.getElementById("home").style.display = "none";
+        document.getElementById("browse").style.display = "none";
+        document.getElementById("errorAccount").style.display = "none";
+
+    } else if (ID ==browse_ref) {
+        document.getElementById("browse").style.display = "block";
+        document.getElementById("home").style.display = "none";
+        document.getElementById("account").style.display = "none";
+        document.getElementById("errorBrowse").style.display = "none";
+
+        if (document.getElementsByName("smail")["0"].value == "") {
+            document.getElementById("informationOther").style.display = "none";
+            document.getElementById("wallOther").style.display = "none";
+        }
+    }
+
+};
+
+
+errorHideHome = function (){
+    console.log("Delete error message");
+    document.getElementById("errorHome").style.display = "none";
+    return true;
+};
+
+errorHideAccount = function (){
+    console.log("Delete error message");
+    document.getElementById("errorAccount").style.display = "none";
+    return true;
+};
+
+errorHideBrowse = function (){
+    console.log("Delete error message");
+    document.getElementById("errorBrowse").style.display = "none";
+    return true;
+};
+
+errorHideWelcome = function (){
+    console.log("Delete error message");
+    document.getElementById("errorWelcome").style.display = "none";
+    return true;
+};
+
+error = function (message, errorId) {
+    console.log("Show error message");
+    document.getElementById(errorId).style.display = "block";
+    message = message.bold();
+
+    var errorMes = document.getElementsByName("errorMessage");
+    var i;
+    for (i = 0; i < errorMes.length; i++) {
+        errorMes[i].innerHTML = message;
+    }
+
+    if (errorId == "errorHome") {
+        setTimeout(errorHideHome, 3000);
+    } else if (errorId == "errorAccount") {
+        setTimeout(errorHideAccount, 3000);
+    } else if (errorId == "errorBrowse") {
+        setTimeout(errorHideBrowse, 3000);
+    } else if (errorId == "errorWelcome") {
+        setTimeout(errorHideWelcome, 3000);
+    }
+};
+
+clean = function(name){
+    document.getElementById(name).value= "";
+
+
+   //var field = document.getElementById(name);
+   //field.value = field.defaultValue;
+    return true;
 };
 
 //function for checking the first name format
@@ -258,7 +546,7 @@ correct_PW = function (psw) {
     }else{
         console.log("Wrong Password");
         if(getToken()){
-            console.log("PW too short")
+            console.log("PW too short");
             error("The password has to consist of at least eight characters", "errorAccount");
         }else{
             error("The password has to consist of at least eight characters", "errorWelcome");
@@ -327,227 +615,29 @@ changePW = function () {
 
 };
 
-//function for getting the current user token
-getToken = function () {
-
-    //check: currently user is logging in
-    if (localStorage.getItem("loggedinusers") !== null) {
-
-        //get the token and produce a string of it
-        var pos = localStorage.getItem("loggedinusers").lastIndexOf(":");
-        var tok = localStorage.getItem("loggedinusers").slice(2, pos - 1).toString();
-        return tok;
-
-    }else{
-        console.log("Problems with getting a token from the server.")
-        return false;
-    }
-};
-
-//function for displaying the three profile tabs
-hide = function (ID) {
-
-    //check: which tab is active
-    if (ID==home_ref) {
-        document.getElementById("home").style.display = "block";
-        document.getElementById("browse").style.display = "none";
-        document.getElementById("account").style.display = "none";
-
-        document.getElementById("errorHome").style.display = "none";
-
-        document.getElementById("fname").innerHTML = getUserData(getToken(),"false").data.firstname;
-        document.getElementById("lname").innerHTML = getUserData(getToken(),"false").data.familyname;
-        document.getElementById("gender").innerHTML = getUserData(getToken(),"false").data.gender;
-        document.getElementById("city").innerHTML = getUserData(getToken(),"false").data.city;
-        document.getElementById("country").innerHTML = getUserData(getToken(),"false").data.country;
-        document.getElementById("infoemail").innerHTML = getUserData(getToken(),"false").data.email;
-        document.getElementById("my_messages").innerHTML = getUserMessages(getToken(),"false");
-
-    } else if (ID==account_ref) {
-        document.getElementById("account").style.display = "block";
-        document.getElementById("home").style.display = "none";
-        document.getElementById("browse").style.display = "none";
-        document.getElementById("errorAccount").style.display = "none";
-
-    } else if (ID ==browse_ref) {
-        document.getElementById("browse").style.display = "block";
-        document.getElementById("home").style.display = "none";
-        document.getElementById("account").style.display = "none";
-        document.getElementById("errorBrowse").style.display = "none";
-
-        if (document.getElementsByName("smail")["0"].value == "") {
-            document.getElementById("informationOther").style.display = "none";
-            document.getElementById("wallOther").style.display = "none";
-        }
-    }
-
-};
-
-//function for logging out
-logout = function (){
-
-    var logoutStr = "token="+getToken();
-
-    //use function of the server
-    sendToServer("/SignOut",logoutStr);
-    viewScreen();
-    return true;
-};
-
-//function for posting messages
-postmessage = function (contentName, toEmail, errorId){
-     if(document.getElementsByName(contentName)["0"].value !== ""){ //check if message is empty
-
-         var contentInBlack = document.getElementsByName(contentName)["0"].value.fontcolor("black"); //To make message seen, because of [Object object] error
-         var postMesStr = "token="+getToken() + "&message="+contentInBlack + "&email="+toEmail;
-         sendToServer("/POSTMes",postMesStr); //post message
-         return true;
-     }
-
-     else{
-         error("Empty Message!", errorId); //show error message if posted message is empty
-         return false;
-     }
-};
-
-//function for getting a message and post it on the wall
-get_message = function (id_wall,email) {
-
-    //check if user exists
-    if (getUserData(getToken(), document.getElementsByName("smail")["0"].value).success === false && id_wall !== 'my_messages'){
-        document.getElementById(id_wall).innerHTML = "Not in System!".fontcolor("red");
-        error("User is not existing", "errorBrowse");
-        document.getElementById("informationOther").style.display = "none";
-        document.getElementById("wallOther").style.display = "none";
-
-    }else{
-        var wall="";
-        for(var i=0; i<getUserMessages(getToken(),email).data.length; i++)
-            {
-                var newPost = getUserMessages(getToken(),email).data[i].writer.toString() + ": " .concat(getUserMessages(getToken(),email).data[i].content.toString()) + "\<br>";
-                wall = wall + newPost;
-
-            }
-        document.getElementById(id_wall).innerHTML = wall;
-    }
-};
-
-//function for getting user information
-getUserInformation = function () {
-
-    //check: email in system
-    if(getUserData(getToken(), document.getElementsByName("smail")["0"].value).success === true) {
-
-        document.getElementById("informationOther").style.display = "block";
-        document.getElementById("wallOther").style.display = "block";
-
-        //information of other user
-        document.getElementById("firstname").innerHTML = getUserData(getToken(), document.getElementsByName("smail")["0"].value).data.firstname;
-        document.getElementById("lastname").innerHTML = getUserData(getToken(), document.getElementsByName("smail")["0"].value).data.familyname;
-        document.getElementById("genderredneg").innerHTML = getUserData(getToken(), document.getElementsByName("smail")["0"].value).data.gender;
-        document.getElementById("cityytic").innerHTML = getUserData(getToken(), document.getElementsByName("smail")["0"].value).data.city;
-        document.getElementById("count").innerHTML = getUserData(getToken(), document.getElementsByName("smail")["0"].value).data.country;
-        document.getElementById("inemail").innerHTML = getUserData(getToken(), document.getElementsByName("smail")["0"].value).data.email;
-    }else {
-        document.getElementById("informationOther").style.display = "none";
-        document.getElementById("wallOther").style.display = "none";
-    }
-    };
-
-
-errorHideHome = function (){
-    console.log("Delete error message");
-    document.getElementById("errorHome").style.display = "none";
-    return true;
-};
-
-errorHideAccount = function (){
-    console.log("Delete error message");
-    document.getElementById("errorAccount").style.display = "none";
-    return true;
-};
-
-errorHideBrowse = function (){
-    console.log("Delete error message");
-    document.getElementById("errorBrowse").style.display = "none";
-    return true;
-};
-
-errorHideWelcome = function (){
-    console.log("Delete error message");
-    document.getElementById("errorWelcome").style.display = "none";
-    return true;
-};
-
-error = function (message, errorId) {
-    console.log("Show error message");
-    document.getElementById(errorId).style.display = "block";
-    message = message.bold();
-
-    var errorMes = document.getElementsByName("errorMessage");
-    var i;
-    for (i = 0; i < errorMes.length; i++) {
-        errorMes[i].innerHTML = message;
-    }
-
-    if (errorId == "errorHome") {
-        setTimeout(errorHideHome, 3000);
-    } else if (errorId == "errorAccount") {
-        setTimeout(errorHideAccount, 3000);
-    } else if (errorId == "errorBrowse") {
-        setTimeout(errorHideBrowse, 3000);
-    } else if (errorId == "errorWelcome") {
-        setTimeout(errorHideWelcome, 3000);
-    }
-};
-
-clean = function(name){
-    console.log(document.getElementById(name).value);
-    document.getElementById(name).value= "";
-    console.log(name);
-    console.log(document.getElementById(name).value);
-
-   //var field = document.getElementById(name);
-   //field.value = field.defaultValue;
-    return true;
-};
-
 
 var obj;
-
 sendToServer =function (app,string) {
 
     var xhttp = new XMLHttpRequest();
+    xhttp.open("POST",app, false);
 
-    xhttp.open("POST",app, true);
     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
     xhttp.onreadystatechange = function () {
-
         if(this.readyState == 4 && this.status == 200){
-            var respond =this.responseText;
-            obj = JSON.parse(object);
+
+            var response =this.responseText;
+            obj = JSON.parse(response);
+
+
         }
     };
-
-    xhttp.setRequestHeader("Content-length", string.length);
-    xhttp.setRequestHeader("Connenction", "close");
 
     xhttp.send(string);
     return obj;
 
 };
-
-
-
-
-
-
-
-
-
-
-
 
 
 

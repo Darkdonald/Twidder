@@ -1,0 +1,16 @@
+Websocket baut verbindung auf bei login. Bei parallelem log-in wird dieser aber nicht abgemeldet, sonder die zweite Person kann sich nicht einloggen. - gelöst
+
+
+
+
+Lab 4 fehlt komplett.
+Profilbilder
+statistik
+
+
+
+Infos:
+Starten der Verbindung über Konsole:
+1. Start der virtuellen Umgebung mit ENV/Scripts/activate
+2. Start des Servers über Python (nicht mehr Flask), mit Konsole: python server.py
+3.Öffnen der Verbindung über Browser: localhost:5000
