@@ -62,9 +62,15 @@ displayViewProfile = function () {
 
 //function if websocket receives a message
 function received_message(message){
-	if(message.content){ //can be either "getout" or "connected" from server.py/api
+    localStorage.setItem(message.variable, message.value); //Set counter numbers in localstorage with the name given in message
+    document.getElementById("number_online_users").innerHTML = localStorage.getItem("number_ws"); //Shows number of current online users (active websockets)
+    document.getElementById("number_accounts").innerHTML = localStorage.getItem("number_accounts");
+    document.getElementById("number_messages").innerHTML = localStorage.getItem("number_messages");
+
+
+	if(message.content){ //can be either "get_out" or "connected" from server.py/api
 		switch(message.content){
-			case "get_out":
+			case "get_out": //log out user on old device
 			    console.log("receive_message: get_out");
 				logout();
 				break;
@@ -116,7 +122,6 @@ signUp = function () {
 
                 //setting of websocket
                 if ("WebSocket" in window) {
-                    console.log("websocket start bei SignUp, client.js");
                     ws = new WebSocket("ws://" + document.domain + ":5000/api");
                     ws.onopen = function () {
                         ws.send(input.data); //send token to server with websocket
@@ -177,7 +182,6 @@ signIn = function () {
                 websocket = new WebSocket('ws://' + document.domain + ":5000/api");
 
                 console.log("client.js/SignIn: Websocket open");
-                console.log(websocket);
 
                 // When the connection is open, send some data to the server
                 websocket.onopen = function () {
@@ -186,7 +190,7 @@ signIn = function () {
                 };
                 websocket.onmessage = function (msg) {
 			        var message = JSON.parse(msg.data); //Von server.py wird bei SignIn bzw. SignUp der token als data gesendet
-			        received_message(message);
+                    received_message(message);
 		        };
                 websocket.onclose = function(e){
 				    console.log("connection closed,SignIn,client.js");
@@ -225,6 +229,9 @@ logout = function (){
     //use function of the server
     sendToServer("/SignOut",logoutStr);
     localStorage.removeItem("token");
+    localStorage.removeItem("number_ws");
+    localStorage.removeItem("number_accounts");
+    localStorage.removeItem("number_messages");
     viewScreen();
 
     //Close Weboscket connenction
@@ -368,6 +375,7 @@ hide = function (ID) {
         document.getElementById("home").style.display = "block";
         document.getElementById("browse").style.display = "none";
         document.getElementById("account").style.display = "none";
+        document.getElementById("statistic").style.display = "none";
 
         document.getElementById("errorHome").style.display = "none";
 
@@ -387,6 +395,7 @@ hide = function (ID) {
         document.getElementById("account").style.display = "block";
         document.getElementById("home").style.display = "none";
         document.getElementById("browse").style.display = "none";
+        document.getElementById("statistic").style.display = "none";
         document.getElementById("errorAccount").style.display = "none";
 
     } else if (ID ==browse_ref) {
@@ -394,11 +403,17 @@ hide = function (ID) {
         document.getElementById("home").style.display = "none";
         document.getElementById("account").style.display = "none";
         document.getElementById("errorBrowse").style.display = "none";
+        document.getElementById("statistic").style.display = "none";
 
         if (document.getElementsByName("smail")["0"].value == "") {
             document.getElementById("informationOther").style.display = "none";
             document.getElementById("wallOther").style.display = "none";
         }
+    }else if (ID ==statistic_ref) {
+        document.getElementById("browse").style.display = "none";
+        document.getElementById("home").style.display = "none";
+        document.getElementById("account").style.display = "none";
+        document.getElementById("statistic").style.display = "block";
     }
 
 };

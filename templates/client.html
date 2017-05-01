@@ -2,9 +2,10 @@
 <html>
     <head>
         <meta charset="UTF-8">
-            <title>Client</title>
+        <title>Twidder</title>
         <link href="static/client.css" type="text/css" rel="stylesheet">
         <script src="static/client.js" type="text/javascript"></script>
+
         <script type="text/view" id="welcomeview">
             <div class="container_all">
 
@@ -80,6 +81,7 @@
                     <li><a id="home_ref" class="active"><button id=homebtn type="button" onclick="hide(home_ref);get_message('my_messages','false');">Home</button></a></li>
                     <li><a id="account_ref"><button id=accoutbtn type="button" onclick="hide(account_ref)">Account</button></a></li>
                     <li><a id="browse_ref"><button id=browsebtn type="button" onclick="hide(browse_ref)">Browse</button></a></li>
+                    <li><a id="statistic_ref"><button id=statisticbtn type="button" onclick="hide(statistic_ref)">Statistic</button></a></li>
                 </ul>
             </div>
 
@@ -120,7 +122,7 @@
                 <div class="account">
                     <header><b>Change Passwort<br><br></b></header>
 
-                    <label id="lOldPW">Old Password<input type="password" placeholder="Enter Old Passwort" name="OPW" id="OldPW" minlength=8></label>
+                    <label id="lOldPW">Old Password<input type="pasword" placeholder="Enter Old Passwort" name="OPW" id="OldPW" minlength=8></label>
 
                     <label id="lNewPW"><br>New Password</b><input type="password" placeholder="Enter New Passwort" name="NPW" id="NewPW" minlength=8></label>
                     <label id="lRNewPW"><br>Repeat Password</b><input type="password" placeholder="Repeat New Passwort" name="RNPW" id="RNewPW" minlength=8 ></label>
@@ -169,9 +171,29 @@
                 <header><b>Error:<br><br></b></header>
                 <p name="errorMessage"></p> <br>
             </div>
+            </div>
 
+
+
+
+            <!--StatisticTab-->
+            <div id="statistic" class="contaier_all_statistic">
+
+                <div class="online_counter" id="onlineCounter">
+                    <header><b>Online Users<br> <br> </b> </header>
+                    <p>Number of online users: <span id="number_online_users"></span></p>
+                    <p>Number of Signd up users: <span id="number_accounts"></span></p>
+
+                </div>
+
+                <div class="message_counter" id="messageCounter">
+                     <header><b>Message Counter<br><br></b></header>
+                     <p>Number of received messages: <span id="number_messages"></span></p>
+
+                </div>
 
             </div>
+
         </script>
     </head>
 
@@ -180,3 +202,4 @@
 
     </body>
 </html>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                

@@ -150,7 +150,7 @@ li a:hover(.active) {
 }
 
 /*Tabular data presentation buttons*/
-#homebtn, #accoutbtn, #browsebtn{
+#homebtn, #accoutbtn, #browsebtn, #statisticbtn{
     background-color: transparent;
     font-size: medium;
 }
@@ -332,5 +332,41 @@ div.information_other{
     padding-right: 6px;
     margin-right: 10px;
     float: left;
+}
 
+
+/*Statistic Tab*/
+div.contaier_all_statistic{
+    height: 400px;
+    width: 400px;
+    margin-top: 100px;
+    margin-left:auto;
+    margin-right: auto;
+}
+
+div.online_counter{
+    font-family: Calibri, Arial, "sans-serif";
+    font-size: small;
+    border: 2px solid #687f91;
+    background-color: white;
+    width: 230px;
+    height: auto;
+    padding-top:3px;
+    padding-left:6px;
+    padding-right: 6px;
+    margin-bottom: 3px;
+    float: left;
+}
+
+div.message_counter{
+    font-family: Calibri, Arial, "sans-serif";
+    font-size: small;
+    border: 2px solid #687f91;
+    background-color: white;
+    width: 230px;
+    height: auto;
+    padding-top:3px;
+    padding-left:6px;
+    padding-right: 6px;
+    float: left;
 }

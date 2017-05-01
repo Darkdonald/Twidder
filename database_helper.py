@@ -158,16 +158,13 @@ def insert_message(emailW, emailR, msg):
 
 
 def delete_token(email):
-    print("db_helper/delete Token aufgerufen")
     con = sql.connect(DATABASE, timeout=5.0)
     cur = con.cursor()
     cur.execute("Update Client SET Token=NULL WHERE Email='%s'" % email)
     con.commit()
     cur.close()
     con.close()
-    print("db_helper/delete Token aufgerufen und abgeschlossen")
     return True
-
 
 def insert_user(email, password, firstname, familyname, gender, city, country):
     con = sql.connect(DATABASE, timeout=5.0)
@@ -192,3 +189,27 @@ def insert_PW(token, psw):
     con.commit()
     con.close()
     return True
+
+
+
+
+def count_messages(email):
+    rec = email
+    mes = []
+    con = sql.connect(DATABASE, timeout=5.0)
+    cur = con.cursor()
+    ex = cur.execute("SELECT * FROM Messages WHERE Receiver='%s'" % rec)
+    for row in ex.fetchall():
+        mes.append({"Message":row[3], "Writer": row[1]})
+    count = len(mes)
+    con.commit()
+    cur.close()
+    con.close()
+    return count
+
+
+def count(table,row):
+    con = sql.connect(DATABASE)
+    cur = con.cursor()
+    cur.execute("SELECT count("+row+")from "+table+ " ")
+    return cur.fetchall()[0][0]
