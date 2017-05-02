@@ -6,7 +6,7 @@ Websocket baut verbindung auf bei login. Bei parallelem log-in wird dieser aber 
 Lab 4:
 Profilbilder
 statistik: Kennzahlen für existierende Accounts, online user und empfangene Nachrichten vorhanden.
-	To-Do: Evtl. Kennzahl für gesendete Nachrichten
+	To-Do: Evtl. Kennzahl für gesendete Nachrichten - gelöst
 		Datentraffik über websocket ungewöhnlcih hoch, message counter wird häufig aufgerufen
 		Darstellung in Digrammen bzw Tabellen fehlt ncoh komplett.
 

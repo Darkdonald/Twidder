@@ -193,12 +193,11 @@ def insert_PW(token, psw):
 
 
 
-def count_messages(email):
-    rec = email
+def count_messages(email,row):
     mes = []
     con = sql.connect(DATABASE, timeout=5.0)
     cur = con.cursor()
-    ex = cur.execute("SELECT * FROM Messages WHERE Receiver='%s'" % rec)
+    ex = cur.execute("SELECT * FROM Messages WHERE %s='%s'" %(str(row),str(email))) #row can be 'Receiver' or 'Writer'
     for row in ex.fetchall():
         mes.append({"Message":row[3], "Writer": row[1]})
     count = len(mes)

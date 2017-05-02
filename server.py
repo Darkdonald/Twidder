@@ -17,7 +17,8 @@ def run_at_start():
     global counter_list
     counter_list['number_ws'] = 0 #Counter active websockets = number of users who are online
     counter_list['number_accounts'] = dh.count('Client','Email') #dh.count(table,row):Number of SigndUp Users / number of existing accounts
-    counter_list['number_messages'] = 0
+    counter_list['number_messages_receive'] = 0
+    counter_list['number_messages_send'] = 0
 
 @app.route('/', methods=['GET'])
 def index():
@@ -65,7 +66,9 @@ def api():
 def update_all():
     sendCounter('number_accounts')
     sendCounter('number_ws')
-    sendCounter('number_messages')
+    sendCounter('number_messages_receive')
+    sendCounter('number_messages_send')
+
 
 def sendCounter(listName):
     #update counter
@@ -94,9 +97,9 @@ def sign_in():
                         i=i+1
                     token.join(token)
                     dh.insert_token(email, token)
-                    print counter_list['number_messages']
-                    counter_list['number_messages']=dh.count_messages(str(email))
-                    print counter_list['number_messages']
+                    counter_list['number_messages_receive']=dh.count_messages(str(email),'Receiver') #Count messages where email = receiver
+                    counter_list['number_messages_send'] = dh.count_messages(str(email), 'Writer') #Count messages where email = writer
+
                     print ("server.py/SignIn Token wird erstellt: " + token)
 
                     return jsonify({"success": True, "message": "Successfully signed in", "data": token})
@@ -215,8 +218,10 @@ def get_user_messages_by_token():
     if (dh.get_user(token)["Email"] is not None):
 
         if (dh.find_user(dh.get_user(token)["Email"])):
-            counter_list['number_messages'] = dh.count_messages(str(email)) #update number of received messages
-            sendCounter('number_messages') #send with websocket
+            counter_list['number_messages_receive'] = dh.count_messages(str(email),'Receiver')  # Count messages where email = receiver
+            counter_list['number_messages_send'] = dh.count_messages(str(email),'Writer')  # Count messages where email = writer
+            sendCounter('number_messages_send')  # send with websocket
+            sendCounter('number_messages_receive') #send with websocket
             return jsonify({"data": dh.get_messages_by_token(token), "success": True, "message": "Messages received."})
         else:
             return jsonify({"success": False, "message": "No data for this user.", "data": None})
@@ -231,8 +236,10 @@ def get_user_messages_by_email():
     email = request.form['email']
     if (dh.get_user(token)["Email"] is not None):
         if(dh.get_messages_by_token(token) is not None):
-            counter_list['number_messages'] = dh.count_messages(str(email))  # update number of received messages
-            sendCounter('number_messages')  # send with websocket
+            #counter_list['number_messages_receive'] = dh.count_messages(str(email),'Receiver')  # Count messages where email = receiver
+            #counter_list['number_messages_send'] = dh.count_messages(str(email),'Writer')  # Count messages where email = writer
+            #sendCounter('number_messages_send')  # send with websocket
+            #sendCounter('number_messages_receive')  # send with websocket
             return jsonify({"data": dh.get_messages(email), "success": True, "message": "Data received."})
 
         else:
@@ -257,8 +264,10 @@ def post_message():
                 writer = dh.get_user(token)["Email"]
                 recepient = recemail
                 dh.insert_message(writer,recepient, message)
-                counter_list['number_messages'] = dh.count_messages(str(writer))  #dh.count_messages(str(self_email))update number of self received messages
-                sendCounter('number_messages')  # send with websocket
+                counter_list['number_messages_receive'] = dh.count_messages(str(writer),'Receiver')  # Count messages where email = receiver
+                counter_list['number_messages_send'] = dh.count_messages(str(writer),'Writer')  # Count messages where email = writer
+                sendCounter('number_messages_send')  # send with websocket
+                sendCounter('number_messages_receive')  # send with websocket
                 return jsonify({"success": True, "message": "Message posted"})
 
             else:

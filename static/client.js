@@ -65,7 +65,8 @@ function received_message(message){
     localStorage.setItem(message.variable, message.value); //Set counter numbers in localstorage with the name given in message
     document.getElementById("number_online_users").innerHTML = localStorage.getItem("number_ws"); //Shows number of current online users (active websockets)
     document.getElementById("number_accounts").innerHTML = localStorage.getItem("number_accounts");
-    document.getElementById("number_messages").innerHTML = localStorage.getItem("number_messages");
+    document.getElementById("number_messages_receive").innerHTML = localStorage.getItem("number_messages_receive");
+    document.getElementById("number_messages_send").innerHTML = localStorage.getItem("number_messages_send");
 
 
 	if(message.content){ //can be either "get_out" or "connected" from server.py/api
@@ -231,7 +232,8 @@ logout = function (){
     localStorage.removeItem("token");
     localStorage.removeItem("number_ws");
     localStorage.removeItem("number_accounts");
-    localStorage.removeItem("number_messages");
+    localStorage.removeItem("number_messages_receive");
+    localStorage.removeItem("number_messages_send");
     viewScreen();
 
     //Close Weboscket connenction
