@@ -2,6 +2,9 @@
  * Created by Jonas Brückner & Maximilian Gerst on 19.01.17.
  */
 
+var myMessageChart;
+var myOnlineChart;
+var myUserChart;
 
 //show the current view
 window.onload = function(){
@@ -63,10 +66,10 @@ displayViewProfile = function () {
 //function if websocket receives a message
 function received_message(message){
     localStorage.setItem(message.variable, message.value); //Set counter numbers in localstorage with the name given in message
-    document.getElementById("number_online_users").innerHTML = localStorage.getItem("number_ws"); //Shows number of current online users (active websockets)
+    //document.getElementById("number_online_users").innerHTML = localStorage.getItem("number_ws"); //Shows number of current online users (active websockets)
     document.getElementById("number_accounts").innerHTML = localStorage.getItem("number_accounts");
-    document.getElementById("number_messages_receive").innerHTML = localStorage.getItem("number_messages_receive");
-    document.getElementById("number_messages_send").innerHTML = localStorage.getItem("number_messages_send");
+    //document.getElementById("number_messages_receive").innerHTML = localStorage.getItem("number_messages_receive");
+    //document.getElementById("number_messages_send").innerHTML = localStorage.getItem("number_messages_send");
 
 
 	if(message.content){ //can be either "get_out" or "connected" from server.py/api
@@ -251,410 +254,549 @@ logout = function (){
 };
 
 
-//function for getting the current user token
-getToken = function () {
+//function for the statistics. Presented in graphs and charts.
+statistics = function () {
 
-    //check: currently user is logging in
-    if (localStorage.getItem("token") !== null) {
+      //define options for bar and line graph, y-Axis should start with 0
+        var options = {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            },
+            legend: {
+                display: false
+            },
+            tooltips: {
+                callbacks: {
+                    label: function(tooltipItem) {
+                        return tooltipItem.yLabel;
+                    }
+                }
+            }
+        };
+
+    //Chart for showing the number of sended and received messages
+    if(!myMessageChart) {
+        var ctx = document.getElementById("chart_messsages").getContext("2d");
+
+        //define dataset for messaging statistic
+        var messageData = {
+            labels: ["Send Messages", "Received Messages"],
+            datasets: [
+                {
+                    label: "Message Counter",
+                    backgroundColor: ['rgba(253,239,93, 0.8)','rgba(137,129,211, 0.8)'], //liu comunication color
+                    borderColor: ['rgba(253,239,93, 1)','rgba(137,129,211, 1)'],
+                    borderWidth: 1,
+                    data: [localStorage.getItem("number_messages_send"), localStorage.getItem("number_messages_receive")]
+                }
+            ]
+        };
 
 
-        //get the token of localStorage
-        var tok = localStorage.getItem("token")
-        return tok;
+        myMessageChart = new Chart(ctx, {
+            type: 'bar',
+            data: messageData,
+            options: options
+        });
 
     }else{
-        console.log("Problems with getting a token from the server.");
-        return false;
+        //update chart if it is already created
+         myMessageChart.data.datasets[0].data=[localStorage.getItem("number_messages_send"), localStorage.getItem("number_messages_receive")];
+         myMessageChart.update();
+         }
+
+
+
+    //Chart for showing online/offline ration of users
+    if(!myUserChart){
+
+        //define dataset for member statistic
+        var statisticMembers = {
+		    labels: ["Online","Offline"],
+		    datasets: [
+		        {
+		            backgroundColor: ['rgba(255,100,66, 0.8)','rgba(106,126,145, 0.8)'],
+                    //members minus online users, to show number of online/offline ratio of user
+                    data: [localStorage.getItem("number_ws"),localStorage.getItem("number_accounts")-localStorage.getItem("number_ws")]
+		        }
+			]
+        };
+
+        //define doughnut chart with ratio of members and currently logged in users
+        ctx3 = document.getElementById('chart_statistic_users').getContext('2d');
+
+		myChart3 = new Chart(ctx3, {
+		  type: 'doughnut',
+		  data: statisticMembers
+		});
+
+    }else{
+        //update chart if it is already created
+        myUserChart.data.datasets[0].data=[localStorage.getItem("number_ws"),localStorage.getItem("number_accounts")-localStorage.getItem("number_ws")];
+        myUserChart.update();
     }
-};
+
+
+    //Chart for showing number of signed up users
+    if(!myOnlineChart){
+
+        var onlineArray = [];
+		var dateArray = [];
+		var numberShownMessages = 7;
+
+		for (i = 0; i < numberShownMessages; i++){
+		    onlineArray.push(localStorage.getItem("number_ws"));
+		    dateArray.push(new Date().toLocaleTimeString());
+		}
+
+		var onlineData = {
+		labels: dateArray,
+		datasets:  [
+		    {
+		        label: "Number of currently online Users",
+		        data: onlineArray,
+                options: options,
+                lineTension: 0.2,
+
+                fill: true,
+                backgroundColor: 'rgba(255,100,66, 0.2)',
+                borderColor: 'rgba(255,100,66, 1)',
+                pointBorderColor: 'rgba(255,100,66, 1)',
+                pointBackgroundColor: 'rgba(255,100,66, 0.2)'
+		    }
+		]
+		};
+
+        ctx2 = document.getElementById('chart_online_users').getContext('2d');
+		myOnlineChart = new Chart(ctx2, {
+		  type: 'line',
+		  data: onlineData
+		});
+
+
+		onlineUserChart_Update = function(){
+		    //push through array to update array
+			for (i = 1; i<numberShownMessages ; i++){
+				myOnlineChart.data.datasets[0].data[i-1]=myOnlineChart.data.datasets[0].data[i];
+				myOnlineChart.data.labels[i-1]=myOnlineChart.data.labels[i];
+			}
+
+			myOnlineChart.data.datasets[0].data[numberShownMessages-1] = localStorage.getItem("number_ws");
+			myOnlineChart.data.labels[numberShownMessages-1] = new Date().toLocaleTimeString();
+			myOnlineChart.update();
+		};
+
+		window.setInterval(onlineUserChart_Update,3000); //set update intervall to 3000 mSec = 3 sec
+    }
+
+
+  };
+
+
+
+//function for getting the current user token
+    getToken = function () {
+
+        //check: currently user is logging in
+        if (localStorage.getItem("token") !== null) {
+
+
+            //get the token of localStorage
+            var tok = localStorage.getItem("token")
+            return tok;
+
+        } else {
+            console.log("Problems with getting a token from the server.");
+            return false;
+        }
+    };
 
 //get User informations, either by token [email="false", myWall] or by email
-getUserData = function (token,email) {
+    getUserData = function (token, email) {
 
-    var getUserDataTStr ="token="+ token.toString();
+        var getUserDataTStr = "token=" + token.toString();
 
-    if (email == "false") {
-        //Get user Data by Token, if no email is submitted
-        var input1 = sendToServer("/GetUDatabyT",getUserDataTStr);
-        return input1; //"success": True, "message": "User data found.", "data": get_user(token)[list] ([firstName, familyName, gender, city, country, emailU, psw, token])
+        if (email == "false") {
+            //Get user Data by Token, if no email is submitted
+            var input1 = sendToServer("/GetUDatabyT", getUserDataTStr);
+            return input1; //"success": True, "message": "User data found.", "data": get_user(token)[list] ([firstName, familyName, gender, city, country, emailU, psw, token])
 
-    } else {
-        //Get user data by Email
-        var getUserDataEStr = "email="+email + "&token="+token;
-        var input2 = sendToServer("/GetUDatabyE",getUserDataEStr.toString());
-        return input2; //"success": True, "message": "User data found.", "data": dh.get_user_email(recemail)[list] ([firstName, familyName, gender, city, country, emailU, psw, token])
-    }
-};
+        } else {
+            //Get user data by Email
+            var getUserDataEStr = "email=" + email + "&token=" + token;
+            var input2 = sendToServer("/GetUDatabyE", getUserDataEStr.toString());
+            return input2; //"success": True, "message": "User data found.", "data": dh.get_user_email(recemail)[list] ([firstName, familyName, gender, city, country, emailU, psw, token])
+        }
+    };
 
 
 //get Messages of User, either by token [email="false", myWall] or by email
-getUserMessages = function (token,email) {
+    getUserMessages = function (token, email) {
 
-    if (email == 'false') { //If email is false, use GetMessageByToken --> MyMessages
-        //Get user Message by Token, if no email is submitted
-        var tokenStr = "token="+getToken();
+        if (email == 'false') { //If email is false, use GetMessageByToken --> MyMessages
+            //Get user Message by Token, if no email is submitted
+            var tokenStr = "token=" + getToken();
 
-        var mArrayT = sendToServer("/GetUMesbyT",tokenStr.toString());
-        return mArrayT; //contains List with 2D Array for messages; "data": dh.get_messages_by_token(token), "success": True, "message": "Messages received."
+            var mArrayT = sendToServer("/GetUMesbyT", tokenStr.toString());
+            return mArrayT; //contains List with 2D Array for messages; "data": dh.get_messages_by_token(token), "success": True, "message": "Messages received."
 
-    } else {
-        //Get user message by Email
-        var uMesByE = "token="+getToken() + "&email="+email;
-        var mArrayE = sendToServer("/GetUMesbyE",uMesByE.toString());
-        return mArrayE; //contains List with 2D Array for messages; "data": dh.get_messages_by_token(token), "success": True, "message": "Messages received."
-    }
-};
+        } else {
+            //Get user message by Email
+            var uMesByE = "token=" + getToken() + "&email=" + email;
+            var mArrayE = sendToServer("/GetUMesbyE", uMesByE.toString());
+            return mArrayE; //contains List with 2D Array for messages; "data": dh.get_messages_by_token(token), "success": True, "message": "Messages received."
+        }
+    };
 
 //function for posting messages
-postmessage = function (contentName, toEmail, errorId){
-     if(document.getElementsByName(contentName)["0"].value !== ""){ //check if message is empty
+    postmessage = function (contentName, toEmail, errorId) {
+        if (document.getElementsByName(contentName)["0"].value !== "") { //check if message is empty
 
-         var contentInBlack = document.getElementsByName(contentName)["0"].value//.fontcolor("black"); //To make message seen, because of [Object object] error
-         var postMesStr = "token="+getToken() + "&message="+contentInBlack + "&toemail="+toEmail;
-         sendToServer("/POSTMes",postMesStr); //post message
+            var contentInBlack = document.getElementsByName(contentName)["0"].value//.fontcolor("black"); //To make message seen, because of [Object object] error
+            var postMesStr = "token=" + getToken() + "&message=" + contentInBlack + "&toemail=" + toEmail;
+            sendToServer("/POSTMes", postMesStr); //post message
 
-         return true;
-     }
+            return true;
+        }
 
-     else{
-         error("Empty Message!", errorId); //show error message if posted message is empty
-         return false;
-     }
-};
+        else {
+            error("Empty Message!", errorId); //show error message if posted message is empty
+            return false;
+        }
+    };
 
 //function for getting a message and post it on the wall
-get_message = function (id_wall,email) {
+    get_message = function (id_wall, email) {
 
-    //check if user exists
-    if (getUserData(getToken(), document.getElementsByName("smail")["0"].value)["success"] === false && id_wall !== 'my_messages'){
+        //check if user exists
+        if (getUserData(getToken(), document.getElementsByName("smail")["0"].value)["success"] === false && id_wall !== 'my_messages') {
 
-        document.getElementById(id_wall).innerHTML = "Not in System!".fontcolor("red");
-        error("User is not existing", "errorBrowse");
+            document.getElementById(id_wall).innerHTML = "Not in System!".fontcolor("red");
+            error("User is not existing", "errorBrowse");
 
-        document.getElementById("informationOther").style.display = "none";
-        document.getElementById("wallOther").style.display = "none";
+            document.getElementById("informationOther").style.display = "none";
+            document.getElementById("wallOther").style.display = "none";
 
-    }else{ //user exists
-        var wall="";
+        } else { //user exists
+            var wall = "";
 
-        for(var i=0; i<getUserMessages(getToken(),email)['data'].length; i++)
-            {
-                var newPost = getUserMessages(getToken(),email)['data'][i.toString()]['Writer'] + ": " .concat(getUserMessages(getToken(),email)['data'][i.toString()]['Message']) + "\<br>";
+            for (var i = 0; i < getUserMessages(getToken(), email)['data'].length; i++) {
+                var newPost = getUserMessages(getToken(), email)['data'][i.toString()]['Writer'] + ": ".concat(getUserMessages(getToken(), email)['data'][i.toString()]['Message']) + "\<br>";
                 wall = wall + newPost;
 
             }
-        document.getElementById(id_wall).innerHTML = wall;
-    }
-};
-
-//function for getting user information
-getUserInformation = function () {
-
-    //check: email in system
-    if(getUserData(getToken(), document.getElementsByName("smail")["0"].value)["success"] === true) {
-
-        document.getElementById("informationOther").style.display = "block";
-        document.getElementById("wallOther").style.display = "block";
-
-        //information of other user
-        document.getElementById("firstname").innerHTML = getUserData(getToken(), document.getElementsByName("smail")["0"].value)["data"]["FirstName"];
-        document.getElementById("lastname").innerHTML = getUserData(getToken(), document.getElementsByName("smail")["0"].value)["data"]["FamilyName"];
-        document.getElementById("genderredneg").innerHTML = getUserData(getToken(), document.getElementsByName("smail")["0"].value)["data"]["Gender"];
-        document.getElementById("cityytic").innerHTML = getUserData(getToken(), document.getElementsByName("smail")["0"].value)["data"]["City"];
-        document.getElementById("count").innerHTML = getUserData(getToken(), document.getElementsByName("smail")["0"].value)["data"]["Country"];
-        document.getElementById("inemail").innerHTML = getUserData(getToken(), document.getElementsByName("smail")["0"].value)["data"]["Email"];
-    }else {
-        document.getElementById("informationOther").style.display = "none";
-        document.getElementById("wallOther").style.display = "none";
-    }
+            document.getElementById(id_wall).innerHTML = wall;
+        }
     };
 
-//function for displaying the three profile tabs
-hide = function (ID) {
+//function for getting user information
+    getUserInformation = function () {
 
-    //check: which tab is active
-    if (ID==home_ref) {
-        document.getElementById("home").style.display = "block";
-        document.getElementById("browse").style.display = "none";
-        document.getElementById("account").style.display = "none";
-        document.getElementById("statistic").style.display = "none";
+        //check: email in system
+        if (getUserData(getToken(), document.getElementsByName("smail")["0"].value)["success"] === true) {
 
-        document.getElementById("errorHome").style.display = "none";
+            document.getElementById("informationOther").style.display = "block";
+            document.getElementById("wallOther").style.display = "block";
 
-
-
-        //get_message('my_messages',getUserData(getToken(),'false')['data']['Email']);
-
-        document.getElementById("fname").innerHTML = getUserData(getToken(),"false")["data"]["FirstName"];
-        document.getElementById("lname").innerHTML = getUserData(getToken(),"false")["data"]["FamilyName"];
-        document.getElementById("gender").innerHTML = getUserData(getToken(),"false")["data"]["Gender"];
-        document.getElementById("city").innerHTML = getUserData(getToken(),"false")["data"]["City"];
-        document.getElementById("country").innerHTML = getUserData(getToken(),"false")["data"]["Country"];
-        document.getElementById("infoemail").innerHTML = getUserData(getToken(),"false")["data"]["Email"];
-        document.getElementById("my_messages").innerHTML = getUserMessages(getToken(),"false");
-
-    } else if (ID==account_ref) {
-        document.getElementById("account").style.display = "block";
-        document.getElementById("home").style.display = "none";
-        document.getElementById("browse").style.display = "none";
-        document.getElementById("statistic").style.display = "none";
-        document.getElementById("errorAccount").style.display = "none";
-
-    } else if (ID ==browse_ref) {
-        document.getElementById("browse").style.display = "block";
-        document.getElementById("home").style.display = "none";
-        document.getElementById("account").style.display = "none";
-        document.getElementById("errorBrowse").style.display = "none";
-        document.getElementById("statistic").style.display = "none";
-
-        if (document.getElementsByName("smail")["0"].value == "") {
+            //information of other user
+            document.getElementById("firstname").innerHTML = getUserData(getToken(), document.getElementsByName("smail")["0"].value)["data"]["FirstName"];
+            document.getElementById("lastname").innerHTML = getUserData(getToken(), document.getElementsByName("smail")["0"].value)["data"]["FamilyName"];
+            document.getElementById("genderredneg").innerHTML = getUserData(getToken(), document.getElementsByName("smail")["0"].value)["data"]["Gender"];
+            document.getElementById("cityytic").innerHTML = getUserData(getToken(), document.getElementsByName("smail")["0"].value)["data"]["City"];
+            document.getElementById("count").innerHTML = getUserData(getToken(), document.getElementsByName("smail")["0"].value)["data"]["Country"];
+            document.getElementById("inemail").innerHTML = getUserData(getToken(), document.getElementsByName("smail")["0"].value)["data"]["Email"];
+        } else {
             document.getElementById("informationOther").style.display = "none";
             document.getElementById("wallOther").style.display = "none";
         }
-    }else if (ID ==statistic_ref) {
-        document.getElementById("browse").style.display = "none";
-        document.getElementById("home").style.display = "none";
-        document.getElementById("account").style.display = "none";
-        document.getElementById("statistic").style.display = "block";
-    }
+    };
 
-};
+//function for displaying the three profile tabs
+    hide = function (ID) {
 
+        //check: which tab is active
+        if (ID == home_ref) {
+            document.getElementById("home").style.display = "block";
+            document.getElementById("browse").style.display = "none";
+            document.getElementById("account").style.display = "none";
+            document.getElementById("statistic").style.display = "none";
 
-errorHideHome = function (){
-    console.log("Delete error message");
-    document.getElementById("errorHome").style.display = "none";
-    return true;
-};
-
-errorHideAccount = function (){
-    console.log("Delete error message");
-    document.getElementById("errorAccount").style.display = "none";
-    return true;
-};
-
-errorHideBrowse = function (){
-    console.log("Delete error message");
-    document.getElementById("errorBrowse").style.display = "none";
-    return true;
-};
-
-errorHideWelcome = function (){
-    console.log("Delete error message");
-    document.getElementById("errorWelcome").style.display = "none";
-    return true;
-};
-
-error = function (message, errorId) {
-    console.log("Show error message");
-    document.getElementById(errorId).style.display = "block";
-    message = message.bold();
-
-    var errorMes = document.getElementsByName("errorMessage");
-    var i;
-    for (i = 0; i < errorMes.length; i++) {
-        errorMes[i].innerHTML = message;
-    }
-
-    if (errorId == "errorHome") {
-        setTimeout(errorHideHome, 3000);
-    } else if (errorId == "errorAccount") {
-        setTimeout(errorHideAccount, 3000);
-    } else if (errorId == "errorBrowse") {
-        setTimeout(errorHideBrowse, 3000);
-    } else if (errorId == "errorWelcome") {
-        setTimeout(errorHideWelcome, 3000);
-    }
-};
-
-clean = function(name){
-    document.getElementById(name).value= "";
+            document.getElementById("errorHome").style.display = "none";
 
 
-   //var field = document.getElementById(name);
-   //field.value = field.defaultValue;
-    return true;
-};
+            //get_message('my_messages',getUserData(getToken(),'false')['data']['Email']);
 
-//function for checking the first name format
-correct_FirstName = function (fn) {
-    //save all letters in a variable as format
-    var letters = /^[a-zA-Z\u00fc\u00c4\u00e4\u00d6\u00f6\u00dc\u00df]+$/;
+            document.getElementById("fname").innerHTML = getUserData(getToken(), "false")["data"]["FirstName"];
+            document.getElementById("lname").innerHTML = getUserData(getToken(), "false")["data"]["FamilyName"];
+            document.getElementById("gender").innerHTML = getUserData(getToken(), "false")["data"]["Gender"];
+            document.getElementById("city").innerHTML = getUserData(getToken(), "false")["data"]["City"];
+            document.getElementById("country").innerHTML = getUserData(getToken(), "false")["data"]["Country"];
+            document.getElementById("infoemail").innerHTML = getUserData(getToken(), "false")["data"]["Email"];
+            document.getElementById("my_messages").innerHTML = getUserMessages(getToken(), "false");
 
-    //check: first name with format variable
-    if (letters.test(fn) == true){
-        return true;
-    }else{
-        error("First name is not correct", "errorWelcome");
-        return false;
-    }
-};
+        } else if (ID == account_ref) {
+            document.getElementById("account").style.display = "block";
+            document.getElementById("home").style.display = "none";
+            document.getElementById("browse").style.display = "none";
+            document.getElementById("statistic").style.display = "none";
+            document.getElementById("errorAccount").style.display = "none";
 
-//function for checking the family name format
-correct_FamilyName = function (famn) {
+        } else if (ID == browse_ref) {
+            document.getElementById("browse").style.display = "block";
+            document.getElementById("home").style.display = "none";
+            document.getElementById("account").style.display = "none";
+            document.getElementById("errorBrowse").style.display = "none";
+            document.getElementById("statistic").style.display = "none";
 
-    //save all letters in a variable as format
-    var letters = /^[a-zA-Z\u00fc\u00c4\u00e4\u00d6\u00f6\u00dc\u00df]+$/;
-
-    //check: family name with format variable
-    if (letters.test(famn)){
-        return true;
-    }else{
-        error("Familiy name is not correct", "errorWelcome");
-        return false;
-    }
-};
-
-//function for checking the city format
-correct_City = function (city) {
-
-    //save all letters in a variable as format
-    var letters = /^[a-zA-Z\u00fc\u00c4\u00e4\u00d6\u00f6\u00dc\u00df]+$/;
-
-    //check: city with format variable
-    if (letters.test(city)){
-        return true;
-    }else{
-        error("City is not correct", "errorWelcome");
-        return false;
-    }
-};
-
-//function for checking the country format
-correct_Country = function (count) {
-
-    //save all letters in a variable as format
-    var letters = /^[a-zA-Z\u00fc\u00c4\u00e4\u00d6\u00f6\u00dc\u00df]+$/;
-
-    //check: country with format variable
-    if (letters.test(count)){
-        return true;
-    }else{
-        error("Country is not correct", "errorWelcome");
-        return false;
-    }
-};
-
-//function for checking the email format
-correct_Email = function(email){
-
-    //save correct email format
-    var mailformat = /(@)(.+)$/;
-
-    //check: email with email format
-    if (email.match(mailformat)){
-        return true;
-    }else{
-        console.log("Wrong email format");
-        error("Wrong email format", "errorWelcome");
-        return false;
-    }
-};
-
-//function for checking the password format
-correct_PW = function (psw) {
-
-    //save length of password
-    var psw_length = psw.length;
-
-    //check: length of password not smaller than 8 sign
-    if (psw_length >= 8){
-        return true;
-    }else{
-        console.log("Wrong Password");
-        if(getToken()){
-            console.log("PW too short");
-            error("The password has to consist of at least eight characters", "errorAccount");
-        }else{
-            error("The password has to consist of at least eight characters", "errorWelcome");
-        }
-        return false;
-    }
-};
-
-//function for checking the concordance of two passwords
-samePW = function(pw1, pw2){
-
-    //check: first password hasn't any differnces to the second password
-    if (pw1.localeCompare(pw2) == 0){
-        return true;
-    }else {
-        if(getToken()){
-            error("New Passwords are not matching", "errorAccount");
-        }else{
-            error("Passwords are not matching", "errorWelcome");
-        }
-        return false;
-    }
-};
-
-//function for changing password
-changePW = function () {
-    //read in all necessary data
-    var token = getToken();
-    var oldPW = document.getElementsByName("OPW")["0"].value;
-    var newPW = document.getElementsByName("NPW")["0"].value;
-    var rNewPW = document.getElementsByName("RNPW")["0"].value;
-
-
-
-    //check: new password is the same like the repeated password and the password format is correct
-    if(samePW(newPW.toString(), oldPW.toString())){
-         error("New password is matching old password!","errorAccount");
-         console.log("samePW true");
-         return false;
-     }
-     else{
-        console.log("samePW false");
-        if(samePW(newPW.toString(), rNewPW.toString())){
-            //use function of the server
-
-            if(correct_PW(newPW)) {
-                var pwStr = "token="+token + "&old_password="+oldPW + "&new_password="+newPW;
-
-                if(sendToServer("/changePassword",pwStr).success == true) {
-                    error("Password changed", "errorAccount");
-                    return true;
-
-                }else{
-                    error("Old Password is not correct", "errorAccount");
-                }
-
-            }else{
-                return false;
+            if (document.getElementsByName("smail")["0"].value == "") {
+                document.getElementById("informationOther").style.display = "none";
+                document.getElementById("wallOther").style.display = "none";
             }
-        }else {
-            console.log("change PW false");
-            return false;
-    }
-    }
+        } else if (ID == statistic_ref) {
+            document.getElementById("browse").style.display = "none";
+            document.getElementById("home").style.display = "none";
+            document.getElementById("account").style.display = "none";
+            document.getElementById("statistic").style.display = "block";
+        }
+
+    };
 
 
-};
+    errorHideHome = function () {
+        console.log("Delete error message");
+        document.getElementById("errorHome").style.display = "none";
+        return true;
+    };
 
+    errorHideAccount = function () {
+        console.log("Delete error message");
+        document.getElementById("errorAccount").style.display = "none";
+        return true;
+    };
 
-var obj;
-sendToServer =function (app,string) {
+    errorHideBrowse = function () {
+        console.log("Delete error message");
+        document.getElementById("errorBrowse").style.display = "none";
+        return true;
+    };
 
-    var xhttp = new XMLHttpRequest();
-    xhttp.open("POST",app, false);
+    errorHideWelcome = function () {
+        console.log("Delete error message");
+        document.getElementById("errorWelcome").style.display = "none";
+        return true;
+    };
 
-    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    error = function (message, errorId) {
+        console.log("Show error message");
+        document.getElementById(errorId).style.display = "block";
+        message = message.bold();
 
-    xhttp.onreadystatechange = function () {
-        if(this.readyState == 4 && this.status == 200){
+        var errorMes = document.getElementsByName("errorMessage");
+        var i;
+        for (i = 0; i < errorMes.length; i++) {
+            errorMes[i].innerHTML = message;
+        }
 
-            var response =this.responseText;
-            obj = JSON.parse(response);
-
-
+        if (errorId == "errorHome") {
+            setTimeout(errorHideHome, 3000);
+        } else if (errorId == "errorAccount") {
+            setTimeout(errorHideAccount, 3000);
+        } else if (errorId == "errorBrowse") {
+            setTimeout(errorHideBrowse, 3000);
+        } else if (errorId == "errorWelcome") {
+            setTimeout(errorHideWelcome, 3000);
         }
     };
 
-    xhttp.send(string);
-    return obj;
+    clean = function (name) {
+        document.getElementById(name).value = "";
 
-};
+
+        //var field = document.getElementById(name);
+        //field.value = field.defaultValue;
+        return true;
+    };
+
+//function for checking the first name format
+    correct_FirstName = function (fn) {
+        //save all letters in a variable as format
+        var letters = /^[a-zA-Z\u00fc\u00c4\u00e4\u00d6\u00f6\u00dc\u00df]+$/;
+
+        //check: first name with format variable
+        if (letters.test(fn) == true) {
+            return true;
+        } else {
+            error("First name is not correct", "errorWelcome");
+            return false;
+        }
+    };
+
+//function for checking the family name format
+    correct_FamilyName = function (famn) {
+
+        //save all letters in a variable as format
+        var letters = /^[a-zA-Z\u00fc\u00c4\u00e4\u00d6\u00f6\u00dc\u00df]+$/;
+
+        //check: family name with format variable
+        if (letters.test(famn)) {
+            return true;
+        } else {
+            error("Familiy name is not correct", "errorWelcome");
+            return false;
+        }
+    };
+
+//function for checking the city format
+    correct_City = function (city) {
+
+        //save all letters in a variable as format
+        var letters = /^[a-zA-Z\u00fc\u00c4\u00e4\u00d6\u00f6\u00dc\u00df]+$/;
+
+        //check: city with format variable
+        if (letters.test(city)) {
+            return true;
+        } else {
+            error("City is not correct", "errorWelcome");
+            return false;
+        }
+    };
+
+//function for checking the country format
+    correct_Country = function (count) {
+
+        //save all letters in a variable as format
+        var letters = /^[a-zA-Z\u00fc\u00c4\u00e4\u00d6\u00f6\u00dc\u00df]+$/;
+
+        //check: country with format variable
+        if (letters.test(count)) {
+            return true;
+        } else {
+            error("Country is not correct", "errorWelcome");
+            return false;
+        }
+    };
+
+//function for checking the email format
+    correct_Email = function (email) {
+
+        //save correct email format
+        var mailformat = /(@)(.+)$/;
+
+        //check: email with email format
+        if (email.match(mailformat)) {
+            return true;
+        } else {
+            console.log("Wrong email format");
+            error("Wrong email format", "errorWelcome");
+            return false;
+        }
+    };
+
+//function for checking the password format
+    correct_PW = function (psw) {
+
+        //save length of password
+        var psw_length = psw.length;
+
+        //check: length of password not smaller than 8 sign
+        if (psw_length >= 8) {
+            return true;
+        } else {
+            console.log("Wrong Password");
+            if (getToken()) {
+                console.log("PW too short");
+                error("The password has to consist of at least eight characters", "errorAccount");
+            } else {
+                error("The password has to consist of at least eight characters", "errorWelcome");
+            }
+            return false;
+        }
+    };
+
+//function for checking the concordance of two passwords
+    samePW = function (pw1, pw2) {
+
+        //check: first password hasn't any differnces to the second password
+        if (pw1.localeCompare(pw2) == 0) {
+            return true;
+        } else {
+            if (getToken()) {
+                error("New Passwords are not matching", "errorAccount");
+            } else {
+                error("Passwords are not matching", "errorWelcome");
+            }
+            return false;
+        }
+    };
+
+//function for changing password
+    changePW = function () {
+        //read in all necessary data
+        var token = getToken();
+        var oldPW = document.getElementsByName("OPW")["0"].value;
+        var newPW = document.getElementsByName("NPW")["0"].value;
+        var rNewPW = document.getElementsByName("RNPW")["0"].value;
+
+
+        //check: new password is the same like the repeated password and the password format is correct
+        if (samePW(newPW.toString(), oldPW.toString())) {
+            error("New password is matching old password!", "errorAccount");
+            console.log("samePW true");
+            return false;
+        }
+        else {
+            console.log("samePW false");
+            if (samePW(newPW.toString(), rNewPW.toString())) {
+                //use function of the server
+
+                if (correct_PW(newPW)) {
+                    var pwStr = "token=" + token + "&old_password=" + oldPW + "&new_password=" + newPW;
+
+                    if (sendToServer("/changePassword", pwStr).success == true) {
+                        error("Password changed", "errorAccount");
+                        return true;
+
+                    } else {
+                        error("Old Password is not correct", "errorAccount");
+                    }
+
+                } else {
+                    return false;
+                }
+            } else {
+                console.log("change PW false");
+                return false;
+            }
+        }
+    };
+
+
+    var obj;
+    sendToServer = function (app, string) {
+
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("POST", app, false);
+
+        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+
+                var response = this.responseText;
+                obj = JSON.parse(response);
+
+
+            }
+        };
+
+        xhttp.send(string);
+        return obj;
+
+    };
 
 
 

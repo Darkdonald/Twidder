@@ -5,10 +5,12 @@ Websocket baut verbindung auf bei login. Bei parallelem log-in wird dieser aber 
 
 Lab 4:
 Profilbilder
-statistik: Kennzahlen für existierende Accounts, online user und empfangene Nachrichten vorhanden.
+statistik: 
 	To-Do: Evtl. Kennzahl für gesendete Nachrichten - gelöst
-		Datentraffik über websocket ungewöhnlcih hoch, message counter wird häufig aufgerufen
-		Darstellung in Digrammen bzw Tabellen fehlt ncoh komplett.
+		Darstellung in Digrammen bzw Tabellen fehlt ncoh komplett. - gelöst
+
+		evtl. label über pie chart mittig plazieren
+		Account-tab felder plazieren
 
 
 
@@ -18,9 +20,12 @@ Starten der Verbindung über Konsole:
 2. Start des Servers über Python (nicht mehr Flask), mit Konsole: python server.py
 3.Öffnen der Verbindung über Browser: localhost:5000
 
+Database: start über sqlite3, .open database.db, .read database.schema --> neue Datenbank
+
 
 
 Infos Python:   "Hello %s, my name is %s" % ('john', 'mike') # Hello john, my name is mike".
 		"My name is %s and i'm %d" % ('john', 12) #My name is john and i'm 12
 
 		The %s token allows me to insert (and potentially format) a string. Notice that the %s token is replaced by whatever I pass to the string after the % symbol. Notice also that I am using a tuple 		here as well (when you only have one string using a tuple is optional) to illustrate that multiple strings can be inserted and formatted in one statement.
+
