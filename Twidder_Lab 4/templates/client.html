@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Twidder</title>
+        <link href="static/client.css" type="text/css" rel="stylesheet">
+        <script src="static/client.js" type="text/javascript"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.js"></script>
+
+        <!-- Welcome View -->
+        <script type="text/view" id="welcomeview">
+            <div class="container_all">
+
+                <div class="image">
+                    <IMG class="displayed" src="static/wimage.png">
+                </div>
+
+                <div class="container_welcome">
+
+                     <div class="container1">
+                        <label>Email</label>
+                        <input type="email" placeholder="Enter Email adress" name="emailIn" required>
+
+                        <label><br>Password</label>
+                        <input type="password" placeholder="Enter Password" name="psw" required>
+
+                        <button href="javascript:void(0)" onclick="signIn()" type="submit" id="LOGIN">SingnIn</button>
+
+                     </div>
+
+                     <div class="container2">
+
+
+                        <header><b>Sign up here<br/><br></b></header>
+
+                        <label>First Name: <input type="text" placeholder="" name="unameReg" id="wfirstn" required></label>
+
+
+                        <label><br>Family Name: <input type="text" placeholder="" name="FN" id="wfamn" required></label>
+
+
+                        <label><br>Gender: <select name="Gen" size="1" id="wgender" required>
+                                                <option>Male</option>
+                                                <option>Female</option>
+                                                <option>Other</option>
+                                            </select>
+                        </label>
+
+
+                        <label><br>City: <input type="text" placeholder="" name="City" id="wcity" required></label>
+
+
+                        <label><br>Country: <input type="text" placeholder="" name="Cou" id="wcountry" required></label>
+
+
+                        <label><br>Email: <input type="email" placeholder="" name="EM" id="wemail"required></label>
+
+
+                        <label><br>Password:  <input type="password" placeholder="Min. 8 symbols" name="psw_new" id="pw1" minlength=8 required></label>
+
+
+                        <label><br>Repeat PSW: <input type="password" placeholder="Min. 8 symbols" name="psw_rep" id="pw2" minlength=8 required></label>
+
+
+                        <button href="javascript:void(0)" onclick="signUp()" type="submit" id="SIGNUP">SignUp</button>
+
+                      </div>
+                 </div>
+
+                 <div class="error" id="errorWelcome">
+                    <header><b>Error:<br><br></b></header>
+                    <p name="errorMessage"></p> <br>
+                </div>
+
+            </div>
+        </script>
+
+        <!-- Profile View -->
+        <script type="text/view" id="profileview" class="">
+            <div class="bar">
+
+                <ul>
+                    <li><a id="home_ref" class="active"><button id=homebtn type="button" onclick="hide(home_ref);get_message('my_messages','false');">Home</button></a></li>
+                    <li><a id="account_ref"><button id=accoutbtn type="button" onclick="hide(account_ref)">Account</button></a></li>
+                    <li><a id="browse_ref"><button id=browsebtn type="button" onclick="hide(browse_ref)">Browse</button></a></li>
+                    <li><a id="statistic_ref"><button id=statisticbtn type="button" onclick="hide(statistic_ref);statistics();">Statistic</button></a></li>
+                </ul>
+            </div>
+
+
+            <!--homeTab-->
+            <div id="home" class="container_all_home">
+
+            <div class="information">
+                <header><b>Personal Informations <br><br></b></header>
+                <p>First name: <span id="fname"></span></p>
+                    <p>Last name: <span id="lname"></span></p>
+                    <p>Gender: <span id="gender"></span></p>
+                    <p>City: <span id="city"></span></p>
+                    <p>Country: <span id="country"></span></p>
+                    <p>Email: <span id="infoemail"></span></p>
+            </div>
+
+            <div class="posted_messages">
+                <header><b>Wall<br><br></b></header>
+                <label id="my_messages"><br>Test</label> <br>
+                <button type="button" onclick="get_message('my_messages','false')">Reload</button>
+                <input id="new_selfmessage" type="text" placeholder="Type Message.." name="nmymes">
+               <button onclick ="postmessage('nmymes',getUserData(getToken(),'false')['data']['Email'],'errorHome'); get_message('my_messages','false');clean('new_selfmessage');"type="button">Send</button>
+
+
+            </div>
+
+             <div class="error" id="errorHome">
+                <header><b>Error:<br><br></b></header>
+                <p name="errorMessage"></p> <br>
+            </div>
+
+            </div>
+
+            <!--accountTab-->
+            <div id="account" class="container_all_acc" >
+
+                <div class="account">
+                    <header><b>Change Passwort<br><br></b></header>
+
+                    <label id="lOldPW">Old Password</label>
+                    <input type="password" placeholder="Enter Old Passwort" name="OPW" id="OldPW" minlength=8>
+
+                    <label id="lNewPW"><br>New Password</label>
+                    <input type="password" placeholder="Enter New Passwort" name="NPW" id="NewPW" minlength=8>
+
+                    <label id="lRNewPW"><br>Repeat Password</label>
+                    <input type="password" placeholder="Repeat New Passwort" name="RNPW" id="RNewPW" minlength=8>
+
+                    <button onclick="changePW();clean('OldPW');clean('NewPW');clean('RNewPW');" id="submitbtn" type="button">Send</button>
+                </div>
+
+                <div class="error" id="errorAccount">
+                    <header><b>Error:<br><br></b></header>
+                    <p name="errorMessage"></p> <br>
+                </div>
+
+                <div class="logoutbtn">
+                    <button type="button" id="logout" onclick="logout()">Log Out</button>
+                </div>
+
+            </div>
+
+            <!--browserTab-->
+            <div id="browse" class="contaier_all_browse">
+
+            <div class="search">
+                <header><b>Search by Email<br> <br> </b> </header>
+                <input id="search_email" type="text" placeholder="Enter Email" name="smail" required>
+                <button type="button" name="buttonSearch" onclick="getUserInformation(); get_message('browse_message',document.getElementsByName('smail')['0'].value);">Search</button>
+            </div>
+
+            <div class="wall" id="wallOther">
+                 <header><b>Wall<br><br></b></header>
+                <label id="browse_message"> <br> <br> <br> </label> <br>
+                <input id="new_message" type="text" placeholder="New Message" name="nmes">
+                <button  onclick="postmessage('nmes',document.getElementsByName('smail')['0'].value,'errorBrowse'); get_message('browse_message',document.getElementsByName('smail')['0'].value); clean('new_message');" type="button">Send</button>
+            </div>
+
+             <div class="information_other" id="informationOther">
+                    <header><b>Personal Informations <br><br></b></header>
+                    <p>First name: <span id="firstname"></span></p>
+                    <p>Last name: <span id="lastname"></span></p>
+                    <p>Gender: <span id="genderredneg"></span></p>
+                    <p>City: <span id="cityytic"></span></p>
+                    <p>Country: <span id="count"></span></p>
+                    <p>Email: <span id="inemail"></span></p>
+             </div>
+
+            <div class="error" id="errorBrowse">
+                <header><b>Error:<br><br></b></header>
+                <p name="errorMessage"></p> <br>
+            </div>
+            </div>
+
+
+
+
+            <!--StatisticTab-->
+            <div id="statistic" class="contaier_all_statistic">
+
+                <div class="message_counter" id="messageCounter">
+                     <header><b>Message Statistics<br><br></b></header>
+                     <!--<p>Number of received messages: <span id="number_messages_receive"></span></p>-->
+                     <!--<p>Number of sended messages: <span id="number_messages_send"></span></p>-->
+                     <canvas id="chart_messsages" width="400" height="400"></canvas>
+                </div>
+
+                <div class="online_counter" id="onlineCounter">
+                    <header><b>Member Statistics<br> <br> </b> </header>
+                    <!--<p>Number of online users: <span id="number_online_users"></span></p>-->
+                    <canvas id="chart_online_users" width="400" height="400"></canvas>
+                    <canvas id="chart_statistic_users" width="400" height="400" ></canvas>
+                    <p>Number of signed-up users: <span id="number_accounts"></span></p>
+                </div>
+
+            </div>
+
+        </script>
+    </head>
+
+    <body>
+
+
+    </body>
+</html>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
