@@ -1,0 +1,22 @@
+drop table Client;
+drop table Messages;
+
+create table Client (
+	FirstName		nvarchar NOT NULL,
+	FamilyName		nvarchar NOT NULL,
+	Gender			nvarchar NOT NULL,
+	City			nvarchar NOT NULL,
+	Country			nvarchar NOT NULL,
+	Email			nvarchar,
+	Salt			nvarchar NOT NULL,
+	Hash			nvarchar NOT NULL,
+	Token			nvarchar,
+	primary key (Email) );
+
+create table Messages (
+	rowid		integer,
+	Writer		nvarchar,
+	Receiver	nvarchar,
+	Message		nvarchar,
+	primary key (rowid) );
+
